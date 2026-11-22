@@ -1,0 +1,3469 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Vocabulary Garden • Khu Vườn Từ Vựng Cá Nhân</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka, Quicksand & Patrick Hand cho cảm giác scrapbook thủ công -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Patrick+Hand&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                        display: ['Fredoka', 'cursive', 'sans-serif'],
+                        hand: ['Patrick Hand', 'cursive'],
+                    },
+                    colors: {
+                        cherryDark: '#78131c',
+                        cherryMid: '#a52431',
+                        custard: '#f9edc9',
+                        custardDeep: '#edd79c',
+                        caramel: '#d79e53',
+                        matcha: '#96b95b',
+                        cocoaInk: '#2c1813',
+                        berryBlush: '#f3c6c9'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Nền caro gingham vàng mật ong & caramel giống ảnh mẫu */
+        body {
+            background-color: #dfaa5b;
+            background-image:
+                linear-gradient(90deg, rgba(120, 19, 28, 0.14) 50%, transparent 50%),
+                linear-gradient(rgba(120, 19, 28, 0.14) 50%, transparent 50%),
+                radial-gradient(#f9edc9 1.5px, transparent 1.5px);
+            background-size: 32px 32px, 32px 32px, 16px 16px;
+            color: #2c1813;
+        }
+
+        /* Viền ren đỉnh trang màu đỏ cherry */
+        .cherry-scallop-top {
+            background-color: #78131c;
+            background-image: radial-gradient(circle at 12px 14px, transparent 8px, #f9edc9 8.5px, #f9edc9 10px, transparent 10.5px);
+            background-size: 24px 18px;
+        }
+
+        /* Viền sổ tay đục lỗ phía dưới */
+        .notebook-perforation {
+            background-image: radial-gradient(circle at 14px 12px, #78131c 7px, #f9edc9 7.5px);
+            background-size: 28px 20px;
+        }
+
+        /* Thẻ phong cách Scrapbook viền nâu đen đậm + bóng đổ cứng */
+        .scrap-card {
+            background-color: #f9edc9;
+            border: 3px solid #2c1813;
+            box-shadow: 0 6px 0 #2c1813, 0 12px 24px rgba(44, 24, 19, 0.18);
+        }
+
+        .scrap-subcard {
+            background-color: #fff8e6;
+            border: 2.5px solid #2c1813;
+            box-shadow: 0 4px 0 #2c1813;
+        }
+
+        .scrap-btn {
+            border: 2.5px solid #2c1813;
+            box-shadow: 0 3px 0 #2c1813;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
+        }
+        .scrap-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 0 #2c1813;
+        }
+        .scrap-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #2c1813;
+        }
+
+        /* Lưới chấm chéo nhẹ bên trong thẻ kem */
+        .custard-grid {
+            background-color: #f9edc9;
+            background-image:
+                linear-gradient(45deg, rgba(215, 158, 83, 0.16) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(215, 158, 83, 0.16) 25%, transparent 25%);
+            background-size: 22px 22px;
+        }
+
+        /* Hiệu ứng lật thẻ 3D Flashcard */
+        .perspective-1000 {
+            perspective: 1100px;
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
+        }
+        .flashcard-flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Thanh cuộn đẹp */
+        ::-webkit-scrollbar {
+            width: 9px;
+            height: 9px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f9edc9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #78131c;
+            border-radius: 9999px;
+            border: 2px solid #f9edc9;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-[#78131c] selection:text-[#f9edc9]">
+
+    <!-- Dải viền ren Cherry trên cùng -->
+    <div class="h-5 w-full cherry-scallop-top border-b-[3px] border-[#2c1813]"></div>
+
+    <!-- Thông báo nổi Toast (thay thế hoàn toàn alert/confirm) -->
+    <div id="toastStack" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+
+    <!-- Modal xác nhận tùy chỉnh (thay thế confirm()) -->
+    <div id="confirmModal" class="fixed inset-0 z-50 hidden bg-[#2c1813]/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="scrap-card rounded-3xl max-w-md w-full p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-2xl bg-[#78131c] text-[#f9edc9] border-2 border-[#2c1813] flex items-center justify-center text-xl">🍓</span>
+                <h3 id="confirmTitle" class="font-display font-bold text-xl text-[#78131c]">Xác nhận thao tác</h3>
+            </div>
+            <p id="confirmDesc" class="text-sm font-semibold text-[#2c1813]/90 leading-relaxed"></p>
+            <div class="flex justify-end gap-3 pt-2">
+                <button id="confirmCancelBtn" class="scrap-btn px-4 py-2 rounded-2xl bg-white text-[#2c1813] font-bold text-sm cursor-pointer">Hủy bỏ</button>
+                <button id="confirmOkBtn" class="scrap-btn px-5 py-2 rounded-2xl bg-[#78131c] text-[#f9edc9] font-bold text-sm cursor-pointer">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Khung chứa chính -->
+    <div class="max-w-7xl w-full mx-auto px-3 sm:px-6 py-5 sm:py-7 flex-1 space-y-6">
+
+        <!-- HEADER / BANNER PHONG CÁCH SCRAPBOOK DÂU TÂY & KEM TRỨNG -->
+        <header class="scrap-card rounded-[2rem] overflow-hidden">
+            <!-- Thanh nhãn trên cùng kiểu "TODAY'S DESSERT" -->
+            <div class="bg-[#2c1813] text-[#f9edc9] px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 text-xs font-bold">
+                <div class="flex items-center gap-2">
+                    <span class="bg-[#f9edc9] text-[#2c1813] px-2.5 py-0.5 rounded-md font-display tracking-wide">🍓 TODAY'S HARVEST</span>
+                    <span class="hidden sm:inline text-[#f9edc9]/90">Khu vườn từ vựng tiếng Anh cá nhân hóa • Tự tạo &amp; Ghi nhớ sâu</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="cloudSyncBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#96b95b] text-[#2c1813] font-extrabold">
+                        <span class="w-2 h-2 rounded-full bg-[#2c1813] animate-pulse"></span>
+                        <span>Đang kết nối lưu trữ...</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Thân Header với Logo + Thanh Điều Hướng 6 Khu Vực -->
+            <div class="custard-grid p-4 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                <!-- Logo Scrapbook Trái -->
+                <div class="flex items-center gap-4">
+                    <div class="relative shrink-0">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#f9edc9] border-[3px] border-[#2c1813] shadow-[0_4px_0_#2c1813] flex flex-col items-center justify-center relative">
+                            <span class="text-2xl sm:text-3xl leading-none">🍓</span>
+                            <span class="font-display font-bold text-[10px] tracking-wider uppercase bg-[#78131c] text-[#f9edc9] px-2 py-0.5 rounded-full mt-1 border border-[#2c1813]">EST.2026</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="inline-block bg-[#78131c] text-[#f9edc9] text-[11px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full border-2 border-[#2c1813] mb-1">
+                            OFFICIAL VOCABULARY GARDEN
+                        </div>
+                        <h1 class="font-display font-bold text-2xl sm:text-3xl lg:text-4xl text-[#78131c] drop-shadow-[0_2px_0_#fff]">
+                            My Vocabulary Garden
+                        </h1>
+                        <p class="text-xs sm:text-sm font-bold text-[#2c1813]/80 mt-0.5">
+                            Gieo hạt từ vựng của riêng bạn • Chăm sóc bằng Flashcard, 6 Mini-Games &amp; Smart Review
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Thanh Navigation Tabs kiểu nút bấm Retro -->
+                <nav aria-label="Menu chính" class="flex flex-wrap items-center gap-2 bg-[#fff8e6] p-2.5 rounded-3xl border-[2.5px] border-[#2c1813] shadow-[0_4px_0_#2c1813]">
+                    <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-tab scrap-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-extrabold bg-[#96b95b] text-[#2c1813] cursor-pointer">
+                        🏡 Dashboard
+                    </button>
+                    <button onclick="switchTab('manager')" data-tab="manager" class="nav-tab scrap-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-extrabold bg-white text-[#2c1813] cursor-pointer">
+                        🌱 Quản lý từ (<span id="navWordCount">0</span>)
+                    </button>
+                    <button onclick="switchTab('flashcard')" data-tab="flashcard" class="nav-tab scrap-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-extrabold bg-white text-[#2c1813] cursor-pointer">
+                        🃏 Flashcard
+                    </button>
+                    <button onclick="switchTab('games')" data-tab="games" class="nav-tab scrap-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-extrabold bg-white text-[#2c1813] cursor-pointer">
+                        🎮 6 Games
+                    </button>
+                    <button onclick="switchTab('review')" data-tab="review" class="nav-tab scrap-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-extrabold bg-white text-[#2c1813] cursor-pointer">
+                        🧠 Smart Review (<span id="navDueCount">0</span>)
+                    </button>
+                    <button onclick="switchTab('notebook')" data-tab="notebook" class="nav-tab scrap-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-extrabold bg-white text-[#2c1813] cursor-pointer">
+                        📓 Notebook
+                    </button>
+                    <button onclick="switchTab('settings')" data-tab="settings" class="nav-tab scrap-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-extrabold bg-white text-[#2c1813] cursor-pointer">
+                        ⚙️ Sao lưu
+                    </button>
+                    <button onclick="openAuthProfileModal()" id="navAccountBtn" class="scrap-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-extrabold bg-[#78131c] text-[#f9edc9] cursor-pointer">
+                        👤 Username
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Banner hiển thị Username vừa tạo kèm nút COPY USERNAME lớn rõ ràng -->
+        <div id="newAccountBanner" class="hidden scrap-card rounded-3xl p-4 sm:p-5 bg-[#dff2e1] border-[3px] border-[#2c1813] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <span class="inline-block bg-[#78131c] text-[#f9edc9] text-[11px] font-extrabold uppercase px-3 py-0.5 rounded-full border border-[#2c1813]">
+                    🎉 Tài khoản Username mới đã được tạo &amp; tự động đăng nhập
+                </span>
+                <p class="text-xs sm:text-sm font-bold text-[#2c1813]">
+                    Hãy lưu lại Username của bạn để đăng nhập lại bất cứ lúc nào:
+                </p>
+                <div id="newlyCreatedUsernameDisplay" class="font-display font-bold text-2xl sm:text-4xl text-[#78131c] tracking-wide select-all">
+                    garden4821
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+                <button type="button" onclick="copyUsernameToClipboard(state.username || document.getElementById('newlyCreatedUsernameDisplay').textContent)" class="scrap-btn px-4 py-2.5 rounded-2xl bg-[#96b95b] text-[#2c1813] font-extrabold text-xs sm:text-sm cursor-pointer">
+                    📋 COPY USERNAME
+                </button>
+                <button type="button" onclick="dismissNewAccountBanner()" class="scrap-btn px-3.5 py-2.5 rounded-2xl bg-white text-[#2c1813] font-extrabold text-xs sm:text-sm cursor-pointer">
+                    Đã lưu ✓
+                </button>
+            </div>
+        </div>
+
+        <!-- ===================================================================== -->
+        <!-- KHỐI 11: AI VOCABULARY ASSISTANT – TỰ ĐỘNG TRA CỨU & ĐIỀN 11 TRƯỜNG   -->
+        <!-- ===================================================================== -->
+        <section class="scrap-card rounded-[2rem] p-5 sm:p-6 custard-grid space-y-4">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="inline-flex items-center gap-2 bg-[#78131c] text-[#f9edc9] text-xs font-extrabold px-3 py-0.5 rounded-full border-2 border-[#2c1813]">
+                        <span>✨ AI VOCABULARY ASSISTANT • TỰ ĐỘNG ĐIỀN 11 TRƯỜNG</span>
+                    </div>
+                    <h2 class="font-display font-bold text-xl sm:text-2xl text-[#2c1813]">Tra cứu từ điển AI thông minh (UK/US IPA, Collocations, Ngữ pháp)</h2>
+                    <p class="text-xs sm:text-sm font-bold text-[#2c1813]/80">
+                        Nhập từ hoặc cụm từ tiếng Anh, AI sẽ tự động phân tích chính xác theo từng từ loại &amp; điền đủ 11 mục để bạn chỉnh sửa trước khi lưu.
+                    </p>
+                </div>
+
+                <form onsubmit="runAiVocabularyLookup(event)" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:max-w-xl">
+                    <input type="text" id="aiQuickSearchInput" required placeholder="Nhập từ tiếng Anh (VD: environment, take after)..." class="flex-1 px-4 py-3 rounded-2xl border-[2.5px] border-[#2c1813] bg-white text-sm font-extrabold focus:outline-none">
+                    <button type="submit" id="aiLookupMainBtn" class="scrap-btn px-5 py-3 rounded-2xl bg-[#96b95b] hover:bg-[#a6c96b] text-[#2c1813] font-extrabold text-sm cursor-pointer shrink-0">
+                        ✨ AI LOOKUP
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 1: DASHBOARD (TRANG CHỦ THỐNG KÊ & QUICK REVIEW)                  -->
+        <!-- ===================================================================== -->
+        <section id="tab-dashboard" class="tab-panel space-y-6">
+            <!-- Dải banner chào mừng & nút QUICK REVIEW -->
+            <div class="bg-[#78131c] text-[#f9edc9] rounded-3xl border-[3px] border-[#2c1813] shadow-[0_6px_0_#2c1813] p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="inline-flex items-center gap-2 bg-[#f9edc9] text-[#78131c] px-3 py-0.5 rounded-full text-xs font-extrabold border-2 border-[#2c1813]">
+                        <span>🔥 CHUỖI HỌC LIÊN TIẾP (STREAK): <span id="dashStreak">1</span> NGÀY</span>
+                    </div>
+                    <h2 class="font-display font-bold text-xl sm:text-2xl pt-1">Chào mừng trở lại Khu Vườn Từ Vựng của bạn!</h2>
+                    <p class="text-xs sm:text-sm text-[#f9edc9]/90">
+                        Mọi từ vựng bạn thêm vào đều được lưu tự động. Bắt đầu ôn nhanh hoặc gieo thêm từ mới ngay hôm nay nhé!
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-3 shrink-0">
+                    <button onclick="openAddWordModal()" class="scrap-btn px-4 py-3 rounded-2xl bg-[#f9edc9] hover:bg-white text-[#2c1813] font-extrabold text-sm cursor-pointer">
+                        ➕ Thêm từ mới
+                    </button>
+                    <button onclick="startQuickReview()" class="scrap-btn px-5 py-3 rounded-2xl bg-[#96b95b] hover:bg-[#a6c96b] text-[#2c1813] font-extrabold text-sm cursor-pointer">
+                        ⚡ QUICK REVIEW
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4 Thẻ chỉ số chính -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="scrap-card rounded-3xl p-5 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-extrabold uppercase text-[#78131c]">Tổng từ đã lưu</p>
+                        <p id="statTotalWords" class="font-display font-bold text-3xl sm:text-4xl text-[#2c1813] mt-1">0</p>
+                        <p class="text-xs font-bold text-[#2c1813]/70 mt-1">Không giới hạn số lượng</p>
+                    </div>
+                    <span class="text-3xl sm:text-4xl">🍓</span>
+                </div>
+                <div class="scrap-card rounded-3xl p-5 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-extrabold uppercase text-[#4d6e22]">Số từ đã thuộc</p>
+                        <p id="statMasteredWords" class="font-display font-bold text-3xl sm:text-4xl text-[#4d6e22] mt-1">0</p>
+                        <p class="text-xs font-bold text-[#2c1813]/70 mt-1">Mức độ Mastered</p>
+                    </div>
+                    <span class="text-3xl sm:text-4xl">🌿</span>
+                </div>
+                <div class="scrap-card rounded-3xl p-5 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-extrabold uppercase text-[#b54724]">Cần ôn tập ngay</p>
+                        <p id="statReviewWords" class="font-display font-bold text-3xl sm:text-4xl text-[#b54724] mt-1">0</p>
+                        <p class="text-xs font-bold text-[#2c1813]/70 mt-1">New / Learning / Reviewing</p>
+                    </div>
+                    <span class="text-3xl sm:text-4xl">🍰</span>
+                </div>
+                <div class="scrap-card rounded-3xl p-5 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-extrabold uppercase text-[#78131c]">Bộ từ vựng đã tạo</p>
+                        <p id="statDeckCount" class="font-display font-bold text-3xl sm:text-4xl text-[#2c1813] mt-1">0</p>
+                        <p class="text-xs font-bold text-[#2c1813]/70 mt-1">Chủ đề tùy chỉnh</p>
+                    </div>
+                    <span class="text-3xl sm:text-4xl">🧺</span>
+                </div>
+            </div>
+
+            <!-- Cột đôi: Biểu đồ tiến độ trực quan + Từ mới thêm gần đây -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Biểu đồ tiến độ ghi nhớ -->
+                <div class="lg:col-span-5 scrap-card rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-5">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-[#2c1813] text-[#f9edc9] text-xs font-extrabold px-3 py-1 rounded-lg uppercase">EYES HERE! • TIẾN ĐỘ</span>
+                            <span id="masteryPercentText" class="font-display font-bold text-lg text-[#78131c]">0% Thuộc</span>
+                        </div>
+                        <h3 class="font-display font-bold text-xl text-[#2c1813]">Phân bổ mức độ ghi nhớ</h3>
+                        <p class="text-xs font-semibold text-[#2c1813]/75 mt-0.5">Cập nhật tự động khi bạn học Flashcard, chơi Game hoặc ôn tập.</p>
+                    </div>
+
+                    <!-- Biểu đồ cột & thanh tiến trình trực quan -->
+                    <div id="progressChartContainer" class="space-y-3.5 bg-[#fff8e6] p-4 rounded-2xl border-2 border-[#2c1813]"></div>
+
+                    <!-- Tùy chọn nạp nhanh bộ từ mẫu trải nghiệm nếu kho đang trống -->
+                    <div id="starterSeedBanner" class="bg-[#f3c6c9]/70 border-2 border-dashed border-[#78131c] rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="text-xs font-bold text-[#2c1813]">
+                            Kho từ của bạn đang trống? Bạn có thể thêm từ thủ công hoặc nạp thử <strong>12 từ mẫu</strong> để trải nghiệm ngay (có thể xóa bất cứ lúc nào).
+                        </div>
+                        <button onclick="loadOptionalStarterPack()" class="scrap-btn shrink-0 px-3.5 py-2 rounded-xl bg-[#78131c] text-[#f9edc9] text-xs font-extrabold cursor-pointer">
+                            ✨ Nạp 12 từ mẫu
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Danh sách từ mới thêm gần đây -->
+                <div class="lg:col-span-7 scrap-card rounded-3xl p-5 sm:p-6 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <span class="bg-[#78131c] text-[#f9edc9] text-xs font-extrabold px-3 py-1 rounded-lg uppercase">RECENT HARVEST</span>
+                            <h3 class="font-display font-bold text-xl text-[#2c1813] mt-1.5">Từ vựng mới thêm gần đây</h3>
+                        </div>
+                        <button onclick="switchTab('manager')" class="scrap-btn px-3.5 py-1.5 rounded-xl bg-white text-xs font-extrabold text-[#2c1813] cursor-pointer">
+                            Xem tất cả →
+                        </button>
+                    </div>
+                    <div id="recentWordsList" class="space-y-2.5"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 2: TẠO VÀ QUẢN LÝ TỪ VỰNG & BỘ TỪ VỰNG                            -->
+        <!-- ===================================================================== -->
+        <section id="tab-manager" class="tab-panel hidden space-y-6">
+            <!-- Thanh quản lý Bộ từ vựng (Decks / Topics) -->
+            <div class="scrap-card rounded-3xl p-5 sm:p-6 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <span class="bg-[#78131c] text-[#f9edc9] text-xs font-extrabold px-3 py-1 rounded-lg uppercase">VOCABULARY DECKS</span>
+                        <h2 class="font-display font-bold text-xl sm:text-2xl text-[#2c1813] mt-1">Bộ từ vựng theo chủ đề cá nhân</h2>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <input type="text" id="newDeckInput" placeholder="Tên bộ từ mới (VD: IELTS Tech)..." class="px-3.5 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-bold focus:outline-none">
+                        <button onclick="createNewDeck()" class="scrap-btn px-4 py-2 rounded-2xl bg-[#96b95b] text-[#2c1813] font-extrabold text-sm cursor-pointer">
+                            ➕ Tạo bộ từ
+                        </button>
+                    </div>
+                </div>
+                <div id="deckPillsContainer" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <!-- Thanh công cụ Tìm kiếm, Lọc, Thêm 1 từ & Nhập nhiều từ -->
+            <div class="scrap-card rounded-3xl p-5 sm:p-6 space-y-4">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <button onclick="openAddWordModal()" class="scrap-btn px-4 py-2.5 rounded-2xl bg-[#78131c] text-[#f9edc9] font-extrabold text-sm cursor-pointer">
+                            ➕ Thêm từ mới chi tiết
+                        </button>
+                        <button onclick="openBulkModal()" class="scrap-btn px-4 py-2.5 rounded-2xl bg-[#f3c6c9] text-[#2c1813] font-extrabold text-sm cursor-pointer">
+                            📥 Nhập nhiều từ cùng lúc
+                        </button>
+                    </div>
+
+                    <!-- Bộ lọc tìm kiếm -->
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 flex-1 lg:max-w-3xl">
+                        <input type="text" id="filterSearchInput" oninput="renderWordManager()" placeholder="🔍 Tìm từ tiếng Anh, nghĩa Việt..." class="px-3.5 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-bold">
+                        <select id="filterDeckSelect" onchange="renderWordManager()" class="px-3 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-bold"></select>
+                        <select id="filterPosSelect" onchange="renderWordManager()" class="px-3 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-bold">
+                            <option value="ALL">Tất cả loại từ</option>
+                            <option value="noun">Noun (Danh từ)</option>
+                            <option value="verb">Verb (Động từ)</option>
+                            <option value="adjective">Adjective (Tính từ)</option>
+                            <option value="adverb">Adverb (Trạng từ)</option>
+                            <option value="phrase">Phrase / Idiom</option>
+                            <option value="other">Khác</option>
+                        </select>
+                        <select id="filterStatusSelect" onchange="renderWordManager()" class="px-3 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-bold">
+                            <option value="ALL">Mọi mức độ nhớ</option>
+                            <option value="FAV">⭐ Chỉ từ yêu thích</option>
+                            <option value="new">New (Từ mới)</option>
+                            <option value="learning">Learning (Đang học)</option>
+                            <option value="reviewing">Reviewing (Cần ôn)</option>
+                            <option value="mastered">Mastered (Đã thuộc)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Danh sách thẻ từ vựng -->
+                <div id="managerWordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2"></div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 3: FLASHCARD TƯƠNG TÁC LẬT 3D                                     -->
+        <!-- ===================================================================== -->
+        <section id="tab-flashcard" class="tab-panel hidden space-y-6">
+            <div class="scrap-card rounded-3xl p-5 sm:p-6 space-y-5">
+                <!-- Điều khiển Flashcard -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b-2 border-dashed border-[#2c1813]/30 pb-4">
+                    <div>
+                        <span class="bg-[#78131c] text-[#f9edc9] text-xs font-extrabold px-3 py-1 rounded-lg uppercase">INTERACTIVE FLASHCARDS</span>
+                        <h2 class="font-display font-bold text-xl sm:text-2xl text-[#2c1813] mt-1">Học thẻ ghi nhớ 2 mặt</h2>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <select id="fcDeckSelect" onchange="initFlashcards()" class="px-3 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-xs sm:text-sm font-extrabold"></select>
+                        <select id="fcFilterMode" onchange="initFlashcards()" class="px-3 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-xs sm:text-sm font-extrabold">
+                            <option value="all">Học tất cả từ trong bộ</option>
+                            <option value="unmastered">Chỉ từ chưa thuộc</option>
+                            <option value="fav">Chỉ từ yêu thích ⭐</option>
+                        </select>
+                        <button onclick="shuffleFlashcards()" class="scrap-btn px-3.5 py-2 rounded-2xl bg-[#f3c6c9] text-[#2c1813] text-xs sm:text-sm font-extrabold cursor-pointer">
+                            🔀 Xáo trộn
+                        </button>
+                        <button onclick="toggleEnglishOnlyMode()" id="fcEnOnlyBtn" class="scrap-btn px-3.5 py-2 rounded-2xl bg-white text-[#2c1813] text-xs sm:text-sm font-extrabold cursor-pointer">
+                            👁️ Chế độ chỉ hiện Tiếng Anh: TẮT
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Khu vực Thẻ Flashcard 3D -->
+                <div id="flashcardStage" class="max-w-2xl mx-auto w-full space-y-5">
+                    <div class="flex items-center justify-between text-xs font-extrabold text-[#2c1813]">
+                        <span id="fcCounterBadge" class="bg-[#fff8e6] px-3 py-1 rounded-full border-2 border-[#2c1813]">Thẻ 0 / 0</span>
+                        <span id="fcStatusBadge" class="bg-[#96b95b] px-3 py-1 rounded-full border-2 border-[#2c1813]">Trạng thái: New</span>
+                    </div>
+
+                    <!-- Khung lật 3D -->
+                    <div id="flashcardContainer" onclick="flipFlashcard()" class="perspective-1000 h-80 sm:h-96 w-full cursor-pointer select-none">
+                        <div class="flashcard-inner">
+                            <!-- MẶT TRƯỚC -->
+                            <div class="flashcard-face scrap-card rounded-[2rem] custard-grid p-6 sm:p-8 flex flex-col items-center justify-between text-center">
+                                <div class="w-full flex items-center justify-between">
+                                    <span id="fcFrontPos" class="text-xs font-extrabold uppercase px-3 py-1 rounded-full bg-[#78131c] text-[#f9edc9] border-2 border-[#2c1813]">noun</span>
+                                    <button type="button" onclick="event.stopPropagation(); speakCurrentFlashcard()" class="scrap-btn px-3.5 py-1.5 rounded-2xl bg-[#96b95b] text-[#2c1813] text-xs font-extrabold cursor-pointer">
+                                        🔊 Nghe phát âm
+                                    </button>
+                                </div>
+
+                                <div class="space-y-2 my-auto">
+                                    <h3 id="fcFrontWord" class="font-display font-bold text-3xl sm:text-5xl text-[#78131c] break-words">---</h3>
+                                    <p id="fcFrontIpa" class="text-base sm:text-lg font-bold text-[#2c1813]/75">/---/</p>
+                                </div>
+
+                                <div class="text-xs font-extrabold text-[#2c1813]/65 bg-white/80 px-4 py-1.5 rounded-full border border-[#2c1813]">
+                                    👆 Nhấn vào thẻ (hoặc phím Space) để lật xem nghĩa
+                                </div>
+                            </div>
+
+                            <!-- MẶT SAU -->
+                            <div class="flashcard-face flashcard-back bg-[#fff8e6] border-[3px] border-[#2c1813] shadow-[0_6px_0_#2c1813] rounded-[2rem] p-6 sm:p-7 flex flex-col justify-between overflow-y-auto">
+                                <div class="flex items-center justify-between border-b-2 border-dashed border-[#2c1813]/30 pb-2.5">
+                                    <div>
+                                        <span id="fcBackWord" class="font-display font-bold text-xl text-[#78131c]">---</span>
+                                        <span id="fcBackIpa" class="text-xs font-bold text-[#2c1813]/70 ml-2"></span>
+                                    </div>
+                                    <button type="button" onclick="event.stopPropagation(); speakCurrentFlashcard()" class="scrap-btn px-3 py-1 rounded-xl bg-[#f3c6c9] text-xs font-extrabold cursor-pointer">
+                                        🔊 Đọc lại
+                                    </button>
+                                </div>
+
+                                <div id="fcBackDetails" class="space-y-2.5 text-sm my-auto py-2"></div>
+
+                                <div class="text-center text-[11px] font-bold text-[#2c1813]/60">
+                                    Nhấn để lật lại mặt trước
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thanh nút điều hướng & Đánh giá nhớ/chưa nhớ -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-center">
+                            <button onclick="prevFlashcard()" class="scrap-btn px-4 py-2.5 rounded-2xl bg-white text-sm font-extrabold cursor-pointer">
+                                ⬅️ Previous
+                            </button>
+                            <button onclick="nextFlashcard()" class="scrap-btn px-4 py-2.5 rounded-2xl bg-white text-sm font-extrabold cursor-pointer">
+                                Next ➡️
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-center">
+                            <button onclick="markFlashcardStatus('reviewing')" class="scrap-btn px-4 py-2.5 rounded-2xl bg-[#f3c6c9] text-[#78131c] text-sm font-extrabold cursor-pointer">
+                                🔄 Chưa nhớ (Ôn lại)
+                            </button>
+                            <button onclick="markFlashcardStatus('mastered')" class="scrap-btn px-4 py-2.5 rounded-2xl bg-[#96b95b] text-[#2c1813] text-sm font-extrabold cursor-pointer">
+                                ✅ Đã nhớ (Mastered)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 4: KHU VỰC 6 MINI-GAMES HỌC TỪ VỰNG TƯƠNG TÁC                     -->
+        <!-- ===================================================================== -->
+        <section id="tab-games" class="tab-panel hidden space-y-6">
+            <!-- Bảng cấu hình trò chơi -->
+            <div class="scrap-card rounded-3xl p-5 sm:p-6 space-y-5">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b-2 border-dashed border-[#2c1813]/30 pb-4">
+                    <div>
+                        <span class="bg-[#78131c] text-[#f9edc9] text-xs font-extrabold px-3 py-1 rounded-lg uppercase">ARCADE VOCABULARY GARDEN</span>
+                        <h2 class="font-display font-bold text-xl sm:text-2xl text-[#2c1813] mt-1">6 Trò chơi luyện từ vựng từ kho cá nhân</h2>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <div class="flex items-center gap-1.5 bg-[#fff8e6] px-3 py-1.5 rounded-2xl border-2 border-[#2c1813]">
+                            <span class="text-xs font-extrabold">Bộ từ:</span>
+                            <select id="gameDeckSelect" class="bg-transparent text-xs sm:text-sm font-extrabold focus:outline-none"></select>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-[#fff8e6] px-3 py-1.5 rounded-2xl border-2 border-[#2c1813]">
+                            <span class="text-xs font-extrabold">Số câu:</span>
+                            <select id="gameCountSelect" class="bg-transparent text-xs sm:text-sm font-extrabold focus:outline-none">
+                                <option value="5">5 câu</option>
+                                <option value="8" selected>8 câu</option>
+                                <option value="10">10 câu</option>
+                                <option value="15">15 câu</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lưới 6 thẻ chọn Game -->
+                <div id="gameMenuGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <button onclick="startGame('matching')" class="scrap-subcard hover:bg-[#f3c6c9]/40 rounded-3xl p-5 text-left transition cursor-pointer space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl">🧩</span>
+                            <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#78131c] text-[#f9edc9]">GAME 1</span>
+                        </div>
+                        <h3 class="font-display font-bold text-lg text-[#78131c]">Word Matching</h3>
+                        <p class="text-xs font-bold text-[#2c1813]/80">Ghép cặp từ tiếng Anh với nghĩa tiếng Việt tương ứng, tính điểm và thời gian hoàn thành.</p>
+                    </button>
+
+                    <button onclick="startGame('mc')" class="scrap-subcard hover:bg-[#f3c6c9]/40 rounded-3xl p-5 text-left transition cursor-pointer space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl">🎯</span>
+                            <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#78131c] text-[#f9edc9]">GAME 2</span>
+                        </div>
+                        <h3 class="font-display font-bold text-lg text-[#78131c]">Multiple Choice</h3>
+                        <p class="text-xs font-bold text-[#2c1813]/80">Chọn 1 trong 4 đáp án tiếng Việt chính xác kèm giải thích định nghĩa &amp; ví dụ sau mỗi câu.</p>
+                    </button>
+
+                    <button onclick="startGame('spelling')" class="scrap-subcard hover:bg-[#f3c6c9]/40 rounded-3xl p-5 text-left transition cursor-pointer space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl">✍️</span>
+                            <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#78131c] text-[#f9edc9]">GAME 3</span>
+                        </div>
+                        <h3 class="font-display font-bold text-lg text-[#78131c]">Spelling Challenge</h3>
+                        <p class="text-xs font-bold text-[#2c1813]/80">Xem nghĩa tiếng Việt, IPA và nghe phát âm để gõ lại chính xác từ tiếng Anh.</p>
+                    </button>
+
+                    <button onclick="startGame('fill')" class="scrap-subcard hover:bg-[#f3c6c9]/40 rounded-3xl p-5 text-left transition cursor-pointer space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl">📝</span>
+                            <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#78131c] text-[#f9edc9]">GAME 4</span>
+                        </div>
+                        <h3 class="font-display font-bold text-lg text-[#78131c]">Fill in the Blank</h3>
+                        <p class="text-xs font-bold text-[#2c1813]/80">Điền từ còn thiếu vào chính những câu ví dụ bạn đã lưu trong kho từ vựng.</p>
+                    </button>
+
+                    <button onclick="startGame('scramble')" class="scrap-subcard hover:bg-[#f3c6c9]/40 rounded-3xl p-5 text-left transition cursor-pointer space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl">🔤</span>
+                            <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#78131c] text-[#f9edc9]">GAME 5</span>
+                        </div>
+                        <h3 class="font-display font-bold text-lg text-[#78131c]">Word Scramble</h3>
+                        <p class="text-xs font-bold text-[#2c1813]/80">Sắp xếp lại các chữ cái bị xáo trộn thành từ tiếng Anh hoàn chỉnh.</p>
+                    </button>
+
+                    <button onclick="startGame('speed')" class="scrap-subcard hover:bg-[#f3c6c9]/40 rounded-3xl p-5 text-left transition cursor-pointer space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl">⚡</span>
+                            <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#78131c] text-[#f9edc9]">GAME 6</span>
+                        </div>
+                        <h3 class="font-display font-bold text-lg text-[#78131c]">Speed Quiz</h3>
+                        <p class="text-xs font-bold text-[#2c1813]/80">Phản xạ nhanh dưới áp lực đồng hồ đếm ngược 10 giây mỗi câu!</p>
+                    </button>
+                </div>
+
+                <!-- Sân chơi Game đang hoạt động -->
+                <div id="activeGameArena" class="hidden bg-[#fff8e6] border-[3px] border-[#2c1813] rounded-3xl p-5 sm:p-7 space-y-5"></div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 5: SMART REVIEW – ÔN TẬP THÔNG MINH                               -->
+        <!-- ===================================================================== -->
+        <section id="tab-review" class="tab-panel hidden space-y-6">
+            <div class="scrap-card rounded-3xl p-5 sm:p-6 space-y-5">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-2 border-dashed border-[#2c1813]/30 pb-4">
+                    <div>
+                        <span class="bg-[#78131c] text-[#f9edc9] text-xs font-extrabold px-3 py-1 rounded-lg uppercase">SPACED REPETITION SYSTEM</span>
+                        <h2 class="font-display font-bold text-xl sm:text-2xl text-[#2c1813] mt-1">Smart Review – Ôn tập thông minh ưu tiên từ hay quên</h2>
+                        <p class="text-xs sm:text-sm font-bold text-[#2c1813]/75 mt-0.5">
+                            Hệ thống tự động ưu tiên các từ trả lời sai nhiều lần, từ đang ở mức <strong>Reviewing / Learning / New</strong> hoặc đã lâu chưa ôn.
+                        </p>
+                    </div>
+                    <button onclick="startSmartReviewSession()" class="scrap-btn px-5 py-2.5 rounded-2xl bg-[#96b95b] text-[#2c1813] font-extrabold text-sm cursor-pointer shrink-0">
+                        🚀 Bắt đầu phiên ôn tập ưu tiên
+                    </button>
+                </div>
+
+                <!-- Khu vực phiên ôn tập trực tiếp -->
+                <div id="smartReviewSessionBox" class="hidden bg-[#fff8e6] border-[3px] border-[#2c1813] rounded-3xl p-6 space-y-4"></div>
+
+                <!-- Danh sách hàng đợi ưu tiên ôn tập -->
+                <div>
+                    <h3 class="font-display font-bold text-lg text-[#78131c] mb-3">📋 Hàng đợi từ vựng cần chăm sóc (Xếp theo độ ưu tiên)</h3>
+                    <div id="smartReviewQueueList" class="space-y-2.5"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 6: VOCABULARY NOTEBOOK (SỔ TAY BẢNG & GỘP BỘ TỪ)                  -->
+        <!-- ===================================================================== -->
+        <section id="tab-notebook" class="tab-panel hidden space-y-6">
+            <div class="scrap-card rounded-3xl p-5 sm:p-6 space-y-4">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                    <div>
+                        <span class="bg-[#78131c] text-[#f9edc9] text-xs font-extrabold px-3 py-1 rounded-lg uppercase">PERSONAL NOTEBOOK</span>
+                        <h2 class="font-display font-bold text-xl sm:text-2xl text-[#2c1813] mt-1">Sổ tay từ vựng tổng hợp</h2>
+                    </div>
+
+                    <!-- Thanh hành động hàng loạt cho các từ đã tích chọn -->
+                    <div class="flex flex-wrap items-center gap-2 bg-[#f3c6c9]/60 p-2.5 rounded-2xl border-2 border-[#2c1813]">
+                        <span class="text-xs font-extrabold px-2">Đã chọn: <strong id="nbSelectedCount">0</strong> từ</span>
+                        <select id="nbTargetDeckSelect" class="px-2.5 py-1.5 rounded-xl border-2 border-[#2c1813] bg-white text-xs font-extrabold"></select>
+                        <button onclick="assignSelectedToDeck()" class="scrap-btn px-3 py-1.5 rounded-xl bg-[#96b95b] text-xs font-extrabold cursor-pointer">
+                            📂 Chuyển vào bộ này
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Thanh tìm kiếm & sắp xếp A-Z -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <input type="text" id="nbSearchInput" oninput="renderNotebook()" placeholder="🔍 Tìm nhanh trong sổ tay..." class="px-3.5 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-bold">
+                    <select id="nbDeckFilter" onchange="renderNotebook()" class="px-3.5 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-bold"></select>
+                    <select id="nbSortSelect" onchange="renderNotebook()" class="px-3.5 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-bold">
+                        <option value="newest">Sắp xếp: Mới nhất trước</option>
+                        <option value="az">Bảng chữ cái: A → Z</option>
+                        <option value="za">Bảng chữ cái: Z → A</option>
+                        <option value="level">Mức độ ghi nhớ</option>
+                    </select>
+                </div>
+
+                <!-- Bảng Sổ tay Responsive -->
+                <div class="overflow-x-auto rounded-2xl border-2 border-[#2c1813] bg-white">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-[#78131c] text-[#f9edc9] text-xs uppercase">
+                                <th class="p-3 w-10 text-center">
+                                    <input type="checkbox" id="nbSelectAllChk" onchange="toggleNotebookSelectAll(this.checked)" class="w-4 h-4 accent-[#96b95b]">
+                                </th>
+                                <th class="p-3">Từ vựng &amp; IPA</th>
+                                <th class="p-3">Loại từ</th>
+                                <th class="p-3">Nghĩa tiếng Việt</th>
+                                <th class="p-3">Bộ từ</th>
+                                <th class="p-3">Trạng thái</th>
+                                <th class="p-3 text-right">Chi tiết</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notebookTableBody" class="divide-y-2 divide-[#f9edc9] font-semibold"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 7: CÀI ĐẶT, SAO LƯU JSON/CSV & ĐỒNG BỘ TÀI KHOẢN                  -->
+        <!-- ===================================================================== -->
+        <section id="tab-settings" class="tab-panel hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Xuất / Nhập Sao lưu JSON & CSV -->
+                <div class="scrap-card rounded-3xl p-6 space-y-4">
+                    <span class="bg-[#78131c] text-[#f9edc9] text-xs font-extrabold px-3 py-1 rounded-lg uppercase">BACKUP &amp; RESTORE</span>
+                    <h2 class="font-display font-bold text-xl text-[#2c1813]">Xuất &amp; Nhập dữ liệu từ vựng</h2>
+                    <p class="text-xs sm:text-sm font-semibold text-[#2c1813]/80">
+                        Tải xuống toàn bộ kho từ vựng, bộ từ và tiến độ học tập dưới dạng tệp <strong>JSON</strong> (để khôi phục đầy đủ) hoặc <strong>CSV</strong> (mở bằng Excel / Google Sheets).
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-1">
+                        <button onclick="exportDataJSON()" class="scrap-btn px-4 py-2.5 rounded-2xl bg-[#96b95b] text-[#2c1813] font-extrabold text-sm cursor-pointer">
+                            ⬇️ Xuất sao lưu JSON
+                        </button>
+                        <button onclick="exportDataCSV()" class="scrap-btn px-4 py-2.5 rounded-2xl bg-[#fff8e6] text-[#2c1813] font-extrabold text-sm cursor-pointer">
+                            📊 Xuất bảng CSV
+                        </button>
+                    </div>
+
+                    <div class="pt-4 border-t-2 border-dashed border-[#2c1813]/30 space-y-2.5">
+                        <label class="block text-xs font-extrabold uppercase text-[#78131c]">Khôi phục từ tệp sao lưu (.JSON):</label>
+                        <input type="file" id="importJsonFileInput" accept=".json" onchange="handleImportJSON(event)" class="block w-full text-xs font-bold bg-white p-2.5 rounded-2xl border-2 border-[#2c1813] cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Quản lý đồng bộ đám mây & Dữ liệu mẫu -->
+                <div class="scrap-card rounded-3xl p-6 space-y-4">
+                    <span class="bg-[#2c1813] text-[#f9edc9] text-xs font-extrabold px-3 py-1 rounded-lg uppercase">CLOUD SYNC &amp; GARDEN DATA</span>
+                    <h2 class="font-display font-bold text-xl text-[#2c1813]">Trạng thái đồng bộ &amp; Dọn dẹp</h2>
+                    <div class="bg-[#fff8e6] p-4 rounded-2xl border-2 border-[#2c1813] space-y-1.5 text-xs font-bold">
+                        <div>Trạng thái lưu trữ: <span id="settingsSyncStatus" class="text-[#4d6e22]">Đang kết nối...</span></div>
+                        <div>Username hiện tại: <span id="settingsAccountEmail" class="text-[#78131c]">---</span></div>
+                        <div class="break-all">Mã định danh người học (UID): <span id="settingsUserId" class="font-mono text-[#78131c]">---</span></div>
+                        <p class="text-[#2c1813]/70 pt-1">Mỗi Username gắn với một không gian lưu trữ riêng tư tách biệt trên đám mây (bao gồm từ vựng, bộ từ, flashcard, tiến độ học, lịch sử game, từ yêu thích và từ hay sai).</p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button onclick="openAuthProfileModal()" class="scrap-btn px-4 py-2.5 rounded-2xl bg-[#96b95b] text-[#2c1813] font-extrabold text-xs sm:text-sm cursor-pointer">
+                            👤 Username &amp; Hồ sơ cá nhân
+                        </button>
+                        <button onclick="loadOptionalStarterPack()" class="scrap-btn px-4 py-2.5 rounded-2xl bg-[#f3c6c9] text-[#2c1813] font-extrabold text-xs sm:text-sm cursor-pointer">
+                            ✨ Nạp thêm 12 từ mẫu trải nghiệm
+                        </button>
+                        <button onclick="removeSampleWordsOnly()" class="scrap-btn px-4 py-2.5 rounded-2xl bg-white text-[#78131c] font-extrabold text-xs sm:text-sm cursor-pointer">
+                            🧹 Xóa riêng các từ mẫu
+                        </button>
+                        <button onclick="clearAllUserVocabulary()" class="scrap-btn px-4 py-2.5 rounded-2xl bg-[#78131c] text-[#f9edc9] font-extrabold text-xs sm:text-sm cursor-pointer">
+                            🗑️ Xóa toàn bộ kho từ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL HỆ THỐNG TÀI KHOẢN USERNAME & HỒ SƠ HỌC TẬP (PHONG CÁCH PASTEL) -->
+    <!-- ===================================================================== -->
+    <div id="authProfileModal" class="fixed inset-0 z-50 hidden bg-[#2c1813]/65 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="scrap-card rounded-[2rem] max-w-xl w-full p-6 my-auto space-y-5 custard-grid">
+            <div class="flex items-center justify-between border-b-2 border-dashed border-[#2c1813]/30 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">🍓</span>
+                    <div>
+                        <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#78131c]">Welcome to your Vocabulary Garden</p>
+                        <h3 class="font-display font-bold text-xl sm:text-2xl text-[#2c1813]">Tài khoản Username &amp; Hồ sơ</h3>
+                    </div>
+                </div>
+                <button onclick="closeAuthProfileModal()" class="scrap-btn w-9 h-9 rounded-xl bg-white font-extrabold text-sm cursor-pointer">✕</button>
+            </div>
+
+            <!-- KHU VỰC ĐĂNG NHẬP BẰNG USERNAME & TẠO TÀI KHOẢN MỚI -->
+            <div id="authGuestView" class="space-y-4">
+                <div class="bg-[#fff8e6] p-4 rounded-2xl border-2 border-[#2c1813] text-center space-y-1">
+                    <p class="font-display font-bold text-lg text-[#78131c]">Welcome to your Vocabulary Garden</p>
+                    <p class="text-xs font-bold text-[#2c1813]/80">
+                        Đăng nhập bằng Username có sẵn hoặc tạo tài khoản Username mới (không cần email hay mật khẩu).
+                    </p>
+                </div>
+
+                <!-- Form Đăng nhập chỉ bằng Username -->
+                <form id="authLoginForm" onsubmit="handleUsernameLogin(event)" class="bg-[#fff8e6] p-4 rounded-2xl border-2 border-[#2c1813] space-y-3">
+                    <div>
+                        <label for="loginUsernameInput" class="block text-xs font-extrabold uppercase text-[#78131c] mb-1">
+                            Nhập Username của bạn
+                        </label>
+                        <input type="text" id="loginUsernameInput" required autocomplete="off" placeholder="VD: garden4821, flower7295, vocab2026..." class="w-full px-4 py-2.5 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-extrabold text-[#2c1813] focus:outline-none">
+                    </div>
+                    <p id="loginErrorMsg" class="hidden text-xs font-extrabold text-[#78131c] bg-[#f3c6c9] px-3 py-2 rounded-xl border border-[#78131c]">
+                        Account not found
+                    </p>
+                    <button type="submit" id="loginUsernameSubmitBtn" class="scrap-btn w-full py-3 rounded-2xl bg-[#78131c] text-[#f9edc9] font-display font-bold text-base tracking-wide cursor-pointer">
+                        LOGIN
+                    </button>
+                </form>
+
+                <!-- Mục Create a new account -->
+                <div class="bg-[#dff2e1] p-4 rounded-2xl border-2 border-[#2c1813] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <div class="text-xs font-extrabold uppercase text-[#3f634b]">Create a new account</div>
+                        <p class="text-xs font-bold text-[#2c1813]/80">Cấp ngay một Username ngẫu nhiên độc nhất &amp; tự động đăng nhập.</p>
+                    </div>
+                    <button type="button" id="createNewUsernameAccountBtn" onclick="handleCreateNewUsernameAccount()" class="scrap-btn px-4 py-2.5 rounded-2xl bg-[#96b95b] text-[#2c1813] font-extrabold text-xs sm:text-sm shrink-0 cursor-pointer">
+                        🌱 Create a new account
+                    </button>
+                </div>
+            </div>
+
+            <!-- KHU VỰC HỒ SƠ CÁ NHÂN (PROFILE) KHI ĐÃ ĐĂNG NHẬP USERNAME -->
+            <div id="authSignedInView" class="hidden space-y-4">
+                <div class="bg-[#fff8e6] p-4 rounded-2xl border-2 border-[#2c1813] space-y-2.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#96b95b] border border-[#2c1813]">✓ Đang đăng nhập</span>
+                        <span class="text-xs font-extrabold text-[#78131c]">🔥 Streak: <span id="profileStreakVal">1</span> ngày</span>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <div>
+                            <div class="text-[11px] font-extrabold uppercase text-[#2c1813]/65">Username của bạn</div>
+                            <div id="profileUsernameLarge" class="font-display font-bold text-2xl sm:text-3xl text-[#78131c] select-all">---</div>
+                        </div>
+                        <button type="button" onclick="copyUsernameToClipboard(state.username)" class="scrap-btn px-3.5 py-2 rounded-xl bg-[#96b95b] text-[#2c1813] text-xs font-extrabold cursor-pointer">
+                            📋 COPY USERNAME
+                        </button>
+                    </div>
+
+                    <div class="text-xs font-mono text-[#2c1813]/70 break-all pt-1 border-t border-dashed border-[#2c1813]/25">
+                        UID: <span id="profileUidVal">---</span>
+                    </div>
+                </div>
+
+                <form onsubmit="saveUserProfileSettings(event)" class="bg-[#fff8e6] p-4 rounded-2xl border-2 border-[#2c1813] space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-extrabold uppercase mb-1">Tên hiển thị</label>
+                            <input type="text" id="profileDisplayNameInput" placeholder="Tên của bạn" class="w-full px-3.5 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-extrabold uppercase mb-1">Mục tiêu học mỗi ngày (từ)</label>
+                            <input type="number" id="profileDailyGoalInput" min="1" max="200" value="10" class="w-full px-3.5 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-bold">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center bg-[#f9edc9] p-3 rounded-2xl border-2 border-[#2c1813] text-xs font-extrabold">
+                        <div>Tổng từ: <span id="profTotalWords" class="text-[#78131c]">0</span></div>
+                        <div>Đã thuộc: <span id="profMasteredWords" class="text-[#4d6e22]">0</span></div>
+                        <div>Lượt chơi game: <span id="profGamesPlayed" class="text-[#78131c]">0</span></div>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="handleCreateNewUsernameAccount()" class="scrap-btn px-3.5 py-2 rounded-2xl bg-[#dff2e1] text-[#2c1813] font-extrabold text-xs cursor-pointer">
+                                🌱 Tạo Username mới
+                            </button>
+                            <button type="button" onclick="handleUserSignOut()" class="scrap-btn px-4 py-2 rounded-2xl bg-[#f3c6c9] text-[#78131c] font-extrabold text-xs sm:text-sm cursor-pointer">
+                                LOG OUT
+                            </button>
+                        </div>
+                        <button type="submit" class="scrap-btn px-5 py-2 rounded-2xl bg-[#96b95b] text-[#2c1813] font-extrabold text-xs sm:text-sm cursor-pointer">
+                            💾 Lưu hồ sơ
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL NHẬP NHIỀU TỪ CÙNG LÚC (BULK IMPORT)                            -->
+    <!-- ===================================================================== -->
+    <div id="bulkImportModal" class="fixed inset-0 z-50 hidden bg-[#2c1813]/65 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="scrap-card rounded-[2rem] max-w-2xl w-full p-6 space-y-4">
+            <div class="flex items-center justify-between border-b-2 border-dashed border-[#2c1813]/30 pb-3">
+                <h3 class="font-display font-bold text-xl text-[#78131c]">📥 Nhập nhiều từ vựng cùng lúc</h3>
+                <button onclick="closeBulkModal()" class="scrap-btn w-9 h-9 rounded-xl bg-white font-extrabold text-sm cursor-pointer">✕</button>
+            </div>
+            <p class="text-xs sm:text-sm font-bold text-[#2c1813]/85">
+                Nhập mỗi từ trên một dòng theo cú pháp: <code class="bg-white px-2 py-0.5 rounded border border-[#2c1813]">từ tiếng Anh | loại từ | nghĩa tiếng Việt | ví dụ (tùy chọn)</code>
+            </p>
+            <div>
+                <label class="block text-xs font-extrabold uppercase mb-1">Chọn bộ từ để lưu vào:</label>
+                <select id="bulkDeckSelect" class="w-full px-3.5 py-2 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-bold"></select>
+            </div>
+            <textarea id="bulkTextarea" rows="7" placeholder="resilient | adjective | kiên cường, mau phục hồi | Children are often very resilient.&#10;cultivate | verb | trau dồi, nuôi dưỡng | We should cultivate good reading habits.&#10;breakthrough | noun | bước đột phá | Scientists made a major breakthrough." class="w-full p-3.5 rounded-2xl border-2 border-[#2c1813] bg-white text-sm font-semibold"></textarea>
+            <div class="flex justify-end gap-2.5">
+                <button onclick="closeBulkModal()" class="scrap-btn px-4 py-2 rounded-2xl bg-white text-sm font-extrabold cursor-pointer">Đóng</button>
+                <button onclick="processBulkImport()" class="scrap-btn px-5 py-2 rounded-2xl bg-[#96b95b] text-[#2c1813] text-sm font-extrabold cursor-pointer">➕ Thêm tất cả vào vườn</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL XEM CHI TIẾT TỪ VỰNG (TỪ NOTEBOOK / DASHBOARD)                  -->
+    <!-- ===================================================================== -->
+    <div id="wordDetailModal" class="fixed inset-0 z-50 hidden bg-[#2c1813]/65 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="scrap-card rounded-[2rem] max-w-xl w-full p-6 space-y-4">
+            <div class="flex items-center justify-between border-b-2 border-dashed border-[#2c1813]/30 pb-3">
+                <h3 id="detailModalTitle" class="font-display font-bold text-2xl text-[#78131c]">---</h3>
+                <button onclick="closeWordDetailModal()" class="scrap-btn w-9 h-9 rounded-xl bg-white font-extrabold text-sm cursor-pointer">✕</button>
+            </div>
+            <div id="detailModalBody" class="space-y-2.5 text-sm"></div>
+        </div>
+    </div>
+
+    <!-- Chân trang kiểu viền lỗ sổ tay Retro -->
+    <footer class="mt-8">
+        <div class="h-5 w-full notebook-perforation"></div>
+        <div class="bg-[#78131c] text-[#f9edc9] text-center py-4 px-4 text-xs font-bold border-t-[3px] border-[#2c1813]">
+            🍓 My Vocabulary Garden • Không gian gieo trồng &amp; ôn luyện từ vựng cá nhân hóa • Lưu trữ đám mây thời gian thực
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- LOGIC ỨNG DỤNG + FIREBASE FIRESTORE CLOUD STORAGE                     -->
+    <!-- ===================================================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import {
+            getAuth,
+            signInAnonymously,
+            signInWithCustomToken,
+            onAuthStateChanged,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail,
+            GoogleAuthProvider,
+            signInWithPopup,
+            signOut,
+            updateProfile
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ---------------------------------------------------------------------
+        // 1. TRẠNG THÁI TOÀN CỤC (USER-GENERATED VOCABULARY)
+        // ---------------------------------------------------------------------
+        const DEFAULT_DECKS = [
+            "Daily English",
+            "School Vocabulary",
+            "IELTS Vocabulary",
+            "Love & Relationships",
+            "Business English",
+            "New Words"
+        ];
+
+        const STARTER_SAMPLE_WORDS = [
+            {
+                id: "sample_1",
+                isSample: true,
+                word: "cultivate",
+                ipa: "/ˈkʌl.tɪ.veɪt/",
+                pos: "verb",
+                meaningVi: "trau dồi, nuôi dưỡng, canh tác",
+                defEn: "to try to develop and improve something such as a skill or relationship",
+                exampleEn: "Reading daily helps cultivate a rich English vocabulary.",
+                exampleVi: "Đọc sách mỗi ngày giúp trau dồi vốn từ vựng tiếng Anh phong phú.",
+                synonyms: "nurture, develop, foster",
+                antonyms: "neglect, abandon",
+                collocations: "cultivate a habit / relationship",
+                notes: "Thường dùng trong bài viết IELTS Writing Task 2",
+                deck: "IELTS Vocabulary",
+                status: "new",
+                favorite: true,
+                wrongCount: 0,
+                lastReviewed: 0,
+                createdAt: Date.now() - 600000
+            },
+            {
+                id: "sample_2",
+                isSample: true,
+                word: "resilient",
+                ipa: "/rɪˈzɪl.jənt/",
+                pos: "adjective",
+                meaningVi: "kiên cường, có khả năng phục hồi nhanh",
+                defEn: "able to recover quickly after something unpleasant such as shock or injury",
+                exampleEn: "She stayed resilient despite facing several setbacks.",
+                exampleVi: "Cô ấy vẫn kiên cường dù phải đối mặt với nhiều trở ngại.",
+                synonyms: "tough, strong, adaptable",
+                antonyms: "fragile, vulnerable",
+                collocations: "resilient economy / resilient spirit",
+                notes: "Tính từ mô tả tính cách rất hay",
+                deck: "Daily English",
+                status: "learning",
+                favorite: true,
+                wrongCount: 1,
+                lastReviewed: Date.now() - 86400000,
+                createdAt: Date.now() - 500000
+            },
+            {
+                id: "sample_3",
+                isSample: true,
+                word: "affection",
+                ipa: "/əˈfek.ʃən/",
+                pos: "noun",
+                meaningVi: "tình cảm yêu mến, sự trìu mến",
+                defEn: "a feeling of liking or loving someone or something",
+                exampleEn: "Children need lots of love and affection from their parents.",
+                exampleVi: "Trẻ em cần nhiều tình yêu thương và sự trìu mến từ cha mẹ.",
+                synonyms: "fondness, warmth, tenderness",
+                antonyms: "hatred, indifference",
+                collocations: "deep affection / show affection",
+                notes: "Đi với giới từ for / towards",
+                deck: "Love & Relationships",
+                status: "mastered",
+                favorite: false,
+                wrongCount: 0,
+                lastReviewed: Date.now() - 3600000,
+                createdAt: Date.now() - 450000
+            },
+            {
+                id: "sample_4",
+                isSample: true,
+                word: "collaborate",
+                ipa: "/kəˈlæb.ə.reɪt/",
+                pos: "verb",
+                meaningVi: "hợp tác, cộng tác",
+                defEn: "to work together with someone in order to produce or achieve something",
+                exampleEn: "Two departments collaborated on the new marketing campaign.",
+                exampleVi: "Hai phòng ban đã hợp tác thực hiện chiến dịch tiếp thị mới.",
+                synonyms: "cooperate, team up, partner",
+                antonyms: "compete, oppose",
+                collocations: "collaborate with sb on sth",
+                notes: "Danh từ: collaboration",
+                deck: "Business English",
+                status: "reviewing",
+                favorite: false,
+                wrongCount: 2,
+                lastReviewed: Date.now() - 172800000,
+                createdAt: Date.now() - 400000
+            },
+            {
+                id: "sample_5",
+                isSample: true,
+                word: "curriculum",
+                ipa: "/kəˈrɪk.jə.ləm/",
+                pos: "noun",
+                meaningVi: "chương trình giảng dạy",
+                defEn: "the subjects studied in a school, college, etc. and what each subject includes",
+                exampleEn: "Foreign languages are an essential part of the school curriculum.",
+                exampleVi: "Ngoại ngữ là một phần thiết yếu của chương trình giảng dạy ở trường.",
+                synonyms: "syllabus, programme of study",
+                antonyms: "extracurricular activity",
+                collocations: "national curriculum / school curriculum",
+                notes: "Số nhiều: curricula hoặc curriculums",
+                deck: "School Vocabulary",
+                status: "new",
+                favorite: false,
+                wrongCount: 0,
+                lastReviewed: 0,
+                createdAt: Date.now() - 350000
+            },
+            {
+                id: "sample_6",
+                isSample: true,
+                word: "serendipity",
+                ipa: "/ˌser.ənˈdɪp.ə.ti/",
+                pos: "noun",
+                meaningVi: "sự tình cờ may mắn",
+                defEn: "the fact of finding interesting or valuable things by chance",
+                exampleEn: "Meeting my best friend at that tiny cafe was pure serendipity.",
+                exampleVi: "Gặp được người bạn thân nhất ở quán cà phê nhỏ đó hoàn toàn là sự tình cờ may mắn.",
+                synonyms: "good fortune, happy chance",
+                antonyms: "misfortune, bad luck",
+                collocations: "pure serendipity",
+                notes: "Một trong những từ tiếng Anh đẹp nhất",
+                deck: "New Words",
+                status: "learning",
+                favorite: true,
+                wrongCount: 0,
+                lastReviewed: Date.now() - 40000000,
+                createdAt: Date.now() - 300000
+            },
+            {
+                id: "sample_7",
+                isSample: true,
+                word: "breakthrough",
+                ipa: "/ˈbreɪk.θruː/",
+                pos: "noun",
+                meaningVi: "bước đột phá, phát kiến lớn",
+                defEn: "an important discovery or event that helps to improve a situation",
+                exampleEn: "Researchers achieved a major breakthrough in renewable energy.",
+                exampleVi: "Các nhà nghiên cứu đã đạt được bước đột phá lớn về năng lượng tái tạo.",
+                synonyms: "advance, leap, discovery",
+                antonyms: "setback, stagnation",
+                collocations: "make a major breakthrough",
+                notes: "Hay gặp trong chủ đề Science & Technology",
+                deck: "IELTS Vocabulary",
+                status: "mastered",
+                favorite: false,
+                wrongCount: 0,
+                lastReviewed: Date.now() - 7200000,
+                createdAt: Date.now() - 250000
+            },
+            {
+                id: "sample_8",
+                isSample: true,
+                word: "negotiate",
+                ipa: "/nəˈɡəʊ.ʃi.eɪt/",
+                pos: "verb",
+                meaningVi: "đàm phán, thương lượng",
+                defEn: "to have formal discussions with someone in order to reach an agreement",
+                exampleEn: "We are negotiating a better contract with our supplier.",
+                exampleVi: "Chúng tôi đang đàm phán một hợp đồng tốt hơn với nhà cung cấp.",
+                synonyms: "bargain, discuss terms, mediate",
+                antonyms: "refuse, dictate",
+                collocations: "negotiate a deal / contract",
+                notes: "Danh từ: negotiation",
+                deck: "Business English",
+                status: "reviewing",
+                favorite: false,
+                wrongCount: 1,
+                lastReviewed: Date.now() - 120000000,
+                createdAt: Date.now() - 200000
+            },
+            {
+                id: "sample_9",
+                isSample: true,
+                word: "cherish",
+                ipa: "/ˈtʃer.ɪʃ/",
+                pos: "verb",
+                meaningVi: "trân trọng, nâng niu",
+                defEn: "to love, protect, and care for someone or something that is important to you",
+                exampleEn: "I will always cherish the memories of our summer trip.",
+                exampleVi: "Tôi sẽ luôn trân trọng những kỷ niệm về chuyến đi mùa hè của chúng ta.",
+                synonyms: "treasure, value, adore",
+                antonyms: "neglect, despise",
+                collocations: "cherish memories / cherish freedom",
+                notes: "Động từ giàu cảm xúc",
+                deck: "Love & Relationships",
+                status: "new",
+                favorite: true,
+                wrongCount: 0,
+                lastReviewed: 0,
+                createdAt: Date.now() - 150000
+            },
+            {
+                id: "sample_10",
+                isSample: true,
+                word: "diligent",
+                ipa: "/ˈdɪl.ɪ.dʒənt/",
+                pos: "adjective",
+                meaningVi: "chăm chỉ, siêng năng, cần mẫn",
+                defEn: "careful and using a lot of effort",
+                exampleEn: "Diligent students always review their notes after class.",
+                exampleVi: "Những học sinh chăm chỉ luôn ôn lại ghi chép sau giờ học.",
+                synonyms: "hard-working, industrious, conscientious",
+                antonyms: "lazy, careless",
+                collocations: "diligent student / diligent research",
+                notes: "Đồng nghĩa với hard-working nhưng trang trọng hơn",
+                deck: "School Vocabulary",
+                status: "mastered",
+                favorite: false,
+                wrongCount: 0,
+                lastReviewed: Date.now() - 1800000,
+                createdAt: Date.now() - 100000
+            },
+            {
+                id: "sample_11",
+                isSample: true,
+                word: "spontaneous",
+                ipa: "/spɒnˈteɪ.ni.əs/",
+                pos: "adjective",
+                meaningVi: "tự phát, ngẫu hứng, tự nhiên",
+                defEn: "happening or done in a natural, often sudden way, without any planning",
+                exampleEn: "We took a spontaneous weekend trip to the beach.",
+                exampleVi: "Chúng tôi đã có một chuyến đi biển ngẫu hứng vào cuối tuần.",
+                synonyms: "unplanned, impulsive, natural",
+                antonyms: "planned, deliberate",
+                collocations: "spontaneous applause / decision",
+                notes: "Trạng từ: spontaneously",
+                deck: "Daily English",
+                status: "learning",
+                favorite: false,
+                wrongCount: 0,
+                lastReviewed: Date.now() - 50000000,
+                createdAt: Date.now() - 50000
+            },
+            {
+                id: "sample_12",
+                isSample: true,
+                word: "ubiquitous",
+                ipa: "/juːˈbɪk.wɪ.təs/",
+                pos: "adjective",
+                meaningVi: "có mặt ở khắp mọi nơi, phổ biến",
+                defEn: "seeming to be everywhere or in several places at the same time",
+                exampleEn: "Smartphones have become ubiquitous in modern society.",
+                exampleVi: "Điện thoại thông minh đã trở nên phổ biến khắp mọi nơi trong xã hội hiện đại.",
+                synonyms: "omnipresent, pervasive, universal",
+                antonyms: "rare, scarce",
+                collocations: "ubiquitous technology / presence",
+                notes: "Từ vựng band 8.0+ IELTS",
+                deck: "IELTS Vocabulary",
+                status: "new",
+                favorite: false,
+                wrongCount: 0,
+                lastReviewed: 0,
+                createdAt: Date.now() - 10000
+            }
+        ];
+
+        const state = {
+            words: [],
+            customDecks: [...DEFAULT_DECKS],
+            username: "",
+            streak: { count: 1, lastDate: new Date().toISOString().slice(0, 10) },
+            profile: { displayName: "", dailyGoal: 10, gamesPlayed: 0 },
+            authInstance: null,
+            currentUser: null,
+            userId: null,
+            db: null,
+            appId: typeof __app_id !== "undefined" ? __app_id : "my-vocab-garden-default",
+            cloudReady: false,
+            unsubWords: null,
+            unsubMeta: null,
+            duplicateMatchId: null,
+            // Trạng thái Flashcard
+            fcList: [],
+            fcIndex: 0,
+            fcEnglishOnly: false,
+            // Trạng thái Notebook chọn nhiều
+            nbSelectedIds: new Set(),
+            // Trạng thái Game
+            gameSession: null,
+            // Trạng thái Smart Review
+            srQueue: [],
+            srIndex: 0
+        };
+        window.state = state;
+
+        // ---------------------------------------------------------------------
+        // 2. HỆ THỐNG USERNAME DUY NHẤT, TỰ ĐỘNG TẠO & ĐĂNG NHẬP TRÊN FIRESTORE
+        // ---------------------------------------------------------------------
+        const USERNAME_PREFIXES = ["garden", "flower", "vocab", "berry", "petal", "sprout", "bloom", "honey"];
+        const ACTIVE_SESSION_KEY = "mvg_active_uid_v1";
+
+        function generateRandomUsernameCandidate() {
+            const prefix = USERNAME_PREFIXES[Math.floor(Math.random() * USERNAME_PREFIXES.length)];
+            // Dùng số ngẫu nhiên đủ dài (4-6 chữ số) để giảm xác suất trùng ngay lần đầu
+            const num = Math.floor(1000 + Math.random() * 90000);
+            return `${prefix}${num}`;
+        }
+
+        function sanitizeUsernameInput(raw) {
+            return String(raw || "").trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
+        }
+
+        // Kiểm tra tính duy nhất của username trên registry công khai /artifacts/{appId}/public/data/usernames/{username}
+        async function isUsernameAvailable(username) {
+            if (!state.db) return true;
+            try {
+                const regRef = doc(state.db, "artifacts", state.appId, "public", "data", "usernames", username);
+                const snap = await getDoc(regRef);
+                return !snap.exists();
+            } catch (_) {
+                return true;
+            }
+        }
+
+        async function lookupUsernameRecord(username) {
+            if (!state.db || !username) return null;
+            try {
+                const regRef = doc(state.db, "artifacts", state.appId, "public", "data", "usernames", username);
+                const snap = await getDoc(regRef);
+                return snap.exists() ? snap.data() : null;
+            } catch (e) {
+                console.error("Lookup username error:", e);
+                return null;
+            }
+        }
+
+        async function reserveUniqueUsernameAndProvision(uid) {
+            let chosenUsername = "";
+            for (let attempt = 0; attempt < 25; attempt++) {
+                const candidate = generateRandomUsernameCandidate();
+                const available = await isUsernameAvailable(candidate);
+                if (available && state.db) {
+                    const regRef = doc(state.db, "artifacts", state.appId, "public", "data", "usernames", candidate);
+                    try {
+                        await setDoc(regRef, {
+                            username: candidate,
+                            ownerUid: uid,
+                            createdAt: Date.now()
+                        });
+                        chosenUsername = candidate;
+                        break;
+                    } catch (_) {
+                        // Nếu có 2 người tạo cùng lúc và bị đụng độ, vòng lặp sẽ thử username khác
+                    }
+                } else if (!state.db) {
+                    chosenUsername = candidate;
+                    break;
+                }
+            }
+
+            if (!chosenUsername) {
+                chosenUsername = `garden${Date.now().toString().slice(-6)}`;
+            }
+
+            state.username = chosenUsername;
+            state.streak = { count: 1, lastDate: new Date().toISOString().slice(0, 10) };
+            state.profile = { displayName: chosenUsername, dailyGoal: 10, gamesPlayed: 0 };
+
+            if (state.db) {
+                const metaDoc = doc(state.db, "artifacts", state.appId, "users", uid, "meta", "profile");
+                await setDoc(metaDoc, {
+                    username: chosenUsername,
+                    customDecks: [...DEFAULT_DECKS],
+                    streak: state.streak,
+                    profile: state.profile
+                }, { merge: true });
+            }
+
+            return chosenUsername;
+        }
+
+        function attachUserListeners(uid) {
+            if (state.unsubWords) { state.unsubWords(); state.unsubWords = null; }
+            if (state.unsubMeta) { state.unsubMeta(); state.unsubMeta = null; }
+
+            state.userId = uid;
+            try { sessionStorage.setItem(ACTIVE_SESSION_KEY, uid); } catch (_) {}
+
+            const settingsStatus = document.getElementById("settingsSyncStatus");
+            const settingsUid = document.getElementById("settingsUserId");
+            const settingsEmail = document.getElementById("settingsAccountEmail");
+            const badge = document.getElementById("cloudSyncBadge");
+
+            if (settingsUid) settingsUid.textContent = uid;
+            if (settingsStatus) settingsStatus.textContent = "Đã kết nối & cô lập dữ liệu riêng tư ✓";
+
+            const wordsCol = collection(state.db, "artifacts", state.appId, "users", uid, "words");
+            state.unsubWords = onSnapshot(wordsCol, (snapshot) => {
+                const loaded = [];
+                snapshot.forEach((docSnap) => {
+                    loaded.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                loaded.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                state.words = loaded;
+                syncDecksFromWords();
+                refreshEntireUI();
+            }, (err) => {
+                console.error("Firestore words listener error:", err);
+            });
+
+            const metaDoc = doc(state.db, "artifacts", state.appId, "users", uid, "meta", "profile");
+            state.unsubMeta = onSnapshot(metaDoc, async (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.username) {
+                        state.username = data.username;
+                    } else if (!state.username) {
+                        await reserveUniqueUsernameAndProvision(uid);
+                    }
+                    if (Array.isArray(data.customDecks) && data.customDecks.length > 0) {
+                        state.customDecks = Array.from(new Set([...DEFAULT_DECKS, ...data.customDecks]));
+                    }
+                    if (data.streak) state.streak = data.streak;
+                    if (data.profile) state.profile = { ...state.profile, ...data.profile };
+                    updateDailyStreak();
+                } else {
+                    await reserveUniqueUsernameAndProvision(uid);
+                }
+
+                if (badge) {
+                    badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#2c1813]"></span><span>@${escapeHtml(state.username || "garden")}</span>`;
+                }
+                if (settingsEmail) {
+                    settingsEmail.textContent = state.username ? `@${state.username}` : "Chưa đăng nhập";
+                }
+                updateAccountUiState();
+                refreshEntireUI();
+            }, (err) => {
+                console.error("Firestore meta listener error:", err);
+            });
+        }
+
+        async function initCloudStorage() {
+            const badge = document.getElementById("cloudSyncBadge");
+            const settingsStatus = document.getElementById("settingsSyncStatus");
+
+            try {
+                if (typeof __firebase_config === "undefined") {
+                    throw new Error("No firebase config");
+                }
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+                state.authInstance = auth;
+                state.db = db;
+                state.cloudReady = true;
+
+                if (!auth.currentUser) {
+                    if (typeof __initial_auth_token !== "undefined" && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                }
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (!user) {
+                        state.currentUser = null;
+                        state.userId = null;
+                        state.username = "";
+                        state.words = [];
+                        updateAccountUiState();
+                        refreshEntireUI();
+                        return;
+                    }
+
+                    state.currentUser = user;
+                    let savedSessionUid = "";
+                    try { savedSessionUid = sessionStorage.getItem(ACTIVE_SESSION_KEY) || ""; } catch (_) {}
+
+                    // Nếu người dùng đã đăng xuất trước đó (savedSessionUid rỗng), giữ trạng thái chờ đăng nhập lại
+                    if (savedSessionUid === "") {
+                        // Lần đầu tiên truy cập website: tự động tạo tài khoản ngẫu nhiên cho người dùng
+                        await reserveUniqueUsernameAndProvision(user.uid);
+                        showNewAccountBanner(state.username);
+                        attachUserListeners(user.uid);
+                    } else {
+                        attachUserListeners(savedSessionUid);
+                    }
+                });
+            } catch (err) {
+                console.warn("Running in session fallback mode:", err);
+                const fallbackUsername = generateRandomUsernameCandidate();
+                state.username = fallbackUsername;
+                state.userId = `local_${Date.now()}`;
+                if (badge) {
+                    badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#78131c]"></span><span>@${escapeHtml(fallbackUsername)}</span>`;
+                }
+                if (settingsStatus) settingsStatus.textContent = "Hoạt động trong phiên trực tiếp";
+                showNewAccountBanner(fallbackUsername);
+                updateAccountUiState();
+                refreshEntireUI();
+            }
+        }
+
+        async function saveWordToCloud(wordObj) {
+            // Cập nhật ngay trên giao diện cho mượt
+            const idx = state.words.findIndex(w => w.id === wordObj.id);
+            if (idx >= 0) state.words[idx] = wordObj;
+            else state.words.unshift(wordObj);
+            syncDecksFromWords();
+            refreshEntireUI();
+
+            if (state.cloudReady && state.db && state.userId) {
+                try {
+                    const ref = doc(state.db, "artifacts", state.appId, "users", state.userId, "words", wordObj.id);
+                    await setDoc(ref, wordObj);
+                } catch (e) {
+                    console.error("Save word error:", e);
+                }
+            }
+        }
+
+        async function deleteWordFromCloud(wordId) {
+            state.words = state.words.filter(w => w.id !== wordId);
+            state.nbSelectedIds.delete(wordId);
+            refreshEntireUI();
+
+            if (state.cloudReady && state.db && state.userId) {
+                try {
+                    const ref = doc(state.db, "artifacts", state.appId, "users", state.userId, "words", wordId);
+                    await deleteDoc(ref);
+                } catch (e) {
+                    console.error("Delete word error:", e);
+                }
+            }
+        }
+
+        async function saveMetaToCloud() {
+            if (state.cloudReady && state.db && state.userId) {
+                try {
+                    const metaDoc = doc(state.db, "artifacts", state.appId, "users", state.userId, "meta", "profile");
+                    await setDoc(metaDoc, {
+                        customDecks: state.customDecks,
+                        streak: state.streak,
+                        profile: state.profile
+                    }, { merge: true });
+                } catch (e) {
+                    console.error("Save meta error:", e);
+                }
+            }
+        }
+
+        function updateDailyStreak() {
+            const today = new Date().toISOString().slice(0, 10);
+            if (state.streak.lastDate === today) return;
+            const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+            if (state.streak.lastDate === yesterday) {
+                state.streak.count = (state.streak.count || 1) + 1;
+            } else {
+                state.streak.count = 1;
+            }
+            state.streak.lastDate = today;
+            saveMetaToCloud();
+        }
+
+        function syncDecksFromWords() {
+            const fromWords = state.words.map(w => w.deck).filter(Boolean);
+            state.customDecks = Array.from(new Set([...DEFAULT_DECKS, ...state.customDecks, ...fromWords]));
+        }
+
+        // ---------------------------------------------------------------------
+        // 3. TIỆN ÍCH GIAO DIỆN: TOAST, CONFIRM MODAL, SPEECH TTS
+        // ---------------------------------------------------------------------
+        function showToast(message, icon = "🍓") {
+            const stack = document.getElementById("toastStack");
+            const item = document.createElement("div");
+            item.className = "pointer-events-auto scrap-card rounded-2xl px-4 py-3 flex items-center gap-2.5 text-xs sm:text-sm font-extrabold text-[#2c1813] transition-all duration-300";
+            item.innerHTML = `<span class="text-lg">${icon}</span><span>${escapeHtml(message)}</span>`;
+            stack.appendChild(item);
+            setTimeout(() => {
+                item.style.opacity = "0";
+                item.style.transform = "translateY(8px)";
+                setTimeout(() => item.remove(), 300);
+            }, 3200);
+        }
+
+        function askConfirm(title, desc) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById("confirmModal");
+                document.getElementById("confirmTitle").textContent = title;
+                document.getElementById("confirmDesc").textContent = desc;
+                modal.classList.remove("hidden");
+
+                const cleanup = (res) => {
+                    modal.classList.add("hidden");
+                    resolve(res);
+                };
+                document.getElementById("confirmOkBtn").onclick = () => cleanup(true);
+                document.getElementById("confirmCancelBtn").onclick = () => cleanup(false);
+            });
+        }
+
+        function speakText(text) {
+            if (!text) return;
+            if ("speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined") {
+                try {
+                    window.speechSynthesis.cancel();
+                    const utter = new SpeechSynthesisUtterance(text);
+                    utter.lang = "en-US";
+                    utter.rate = 0.95;
+                    window.speechSynthesis.speak(utter);
+                } catch (e) {
+                    showToast("Trình duyệt đang hạn chế đọc âm thanh tự động.", "🔊");
+                }
+            } else {
+                showToast("Trình duyệt không hỗ trợ phát âm.", "🔊");
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // ---------------------------------------------------------------------
+        // 4. ĐIỀU HƯỚNG TAB & CẬP NHẬT TOÀN BỘ UI
+        // ---------------------------------------------------------------------
+        function switchTab(tabName) {
+            document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
+            const target = document.getElementById(`tab-${tabName}`);
+            if (target) target.classList.remove("hidden");
+
+            document.querySelectorAll(".nav-tab").forEach(btn => {
+                const active = btn.getAttribute("data-tab") === tabName;
+                btn.className = `nav-tab scrap-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-extrabold cursor-pointer ${
+                    active ? "bg-[#96b95b] text-[#2c1813]" : "bg-white text-[#2c1813]"
+                }`;
+            });
+
+            if (tabName === "flashcard") initFlashcards();
+            if (tabName === "review") renderSmartReviewQueue();
+            if (tabName === "notebook") renderNotebook();
+        }
+
+        function refreshEntireUI() {
+            populateAllDeckDropdowns();
+            renderDashboard();
+            renderDeckPills();
+            renderWordManager();
+            renderSmartReviewQueue();
+            renderNotebook();
+
+            // Cập nhật số đếm trên thanh Nav
+            document.getElementById("navWordCount").textContent = state.words.length;
+            const dueCount = state.words.filter(w => w.status !== "mastered").length;
+            document.getElementById("navDueCount").textContent = dueCount;
+
+            // Giữ Flashcard đồng bộ nếu đang mở
+            if (!document.getElementById("tab-flashcard").classList.contains("hidden")) {
+                initFlashcards(true);
+            }
+        }
+
+        function populateAllDeckDropdowns() {
+            const deckOptionsAll = `<option value="ALL">Tất cả bộ từ (${state.words.length})</option>` +
+                state.customDecks.map(d => {
+                    const cnt = state.words.filter(w => w.deck === d).length;
+                    return `<option value="${escapeHtml(d)}">${escapeHtml(d)} (${cnt})</option>`;
+                }).join("");
+
+            const deckOptionsOnly = state.customDecks.map(d =>
+                `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`
+            ).join("");
+
+            ["filterDeckSelect", "fcDeckSelect", "gameDeckSelect", "nbDeckFilter"].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const prev = el.value;
+                el.innerHTML = deckOptionsAll;
+                if ([...el.options].some(o => o.value === prev)) el.value = prev;
+            });
+
+            ["fieldDeck", "bulkDeckSelect", "nbTargetDeckSelect"].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const prev = el.value;
+                el.innerHTML = deckOptionsOnly;
+                if ([...el.options].some(o => o.value === prev)) el.value = prev;
+            });
+        }
+
+        // ---------------------------------------------------------------------
+        // 5. DASHBOARD (THỐNG KÊ, BIỂU ĐỒ, TỪ GẦN ĐÂY, QUICK REVIEW)
+        // ---------------------------------------------------------------------
+        function renderDashboard() {
+            const total = state.words.length;
+            const mastered = state.words.filter(w => w.status === "mastered").length;
+            const reviewing = state.words.filter(w => w.status === "reviewing").length;
+            const learning = state.words.filter(w => w.status === "learning").length;
+            const newWords = state.words.filter(w => w.status === "new").length;
+            const needReviewTotal = total - mastered;
+
+            document.getElementById("statTotalWords").textContent = total;
+            document.getElementById("statMasteredWords").textContent = mastered;
+            document.getElementById("statReviewWords").textContent = needReviewTotal;
+            document.getElementById("statDeckCount").textContent = state.customDecks.length;
+            document.getElementById("dashStreak").textContent = state.streak.count || 1;
+
+            const pctMastered = total > 0 ? Math.round((mastered / total) * 100) : 0;
+            document.getElementById("masteryPercentText").textContent = `${pctMastered}% Thuộc`;
+
+            // Ẩn/hiện banner nạp từ mẫu nếu đã có từ
+            const seedBanner = document.getElementById("starterSeedBanner");
+            if (seedBanner) {
+                seedBanner.classList.toggle("hidden", total > 0);
+            }
+
+            // Vẽ biểu đồ tiến độ trực quan 4 mức độ
+            const bars = [
+                { label: "🌿 Mastered (Đã thuộc)", count: mastered, color: "bg-[#96b95b]" },
+                { label: "🍰 Learning (Đang học)", count: learning, color: "bg-[#d79e53]" },
+                { label: "🍓 Reviewing (Cần ôn)", count: reviewing, color: "bg-[#a52431]" },
+                { label: "🌱 New (Từ mới)", count: newWords, color: "bg-[#f3c6c9]" }
+            ];
+
+            document.getElementById("progressChartContainer").innerHTML = bars.map(b => {
+                const pct = total > 0 ? Math.round((b.count / total) * 100) : 0;
+                return `
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs font-extrabold">
+                            <span>${b.label}</span>
+                            <span>${b.count} từ (${pct}%)</span>
+                        </div>
+                        <div class="w-full h-4 bg-[#f9edc9] rounded-full border-2 border-[#2c1813] overflow-hidden">
+                            <div class="h-full ${b.color} transition-all duration-500" style="width: ${pct}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            // Render 6 từ mới thêm gần đây
+            const recent = state.words.slice(0, 6);
+            const recentBox = document.getElementById("recentWordsList");
+            if (!recent.length) {
+                recentBox.innerHTML = `
+                    <div class="bg-[#fff8e6] border-2 border-dashed border-[#2c1813]/40 rounded-2xl p-6 text-center space-y-2">
+                        <p class="text-sm font-extrabold text-[#78131c]">Khu vườn của bạn chưa có từ vựng nào 🌱</p>
+                        <p class="text-xs font-semibold text-[#2c1813]/75">Hãy nhấn <strong>"Thêm từ mới"</strong> để tự nhập từ vựng đầu tiên hoặc nạp bộ từ mẫu trải nghiệm!</p>
+                    </div>
+                `;
+            } else {
+                recentBox.innerHTML = recent.map(w => `
+                    <div class="bg-[#fff8e6] border-2 border-[#2c1813] rounded-2xl p-3.5 flex items-center justify-between gap-3">
+                        <div class="min-w-0">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-display font-bold text-base text-[#78131c]">${escapeHtml(w.word)}</span>
+                                <span class="text-xs font-bold text-[#2c1813]/65">${escapeHtml(w.ipa || "")}</span>
+                                <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-[#f9edc9] border border-[#2c1813]">${escapeHtml(w.pos)}</span>
+                            </div>
+                            <p class="text-xs sm:text-sm font-bold text-[#2c1813] truncate mt-0.5">${escapeHtml(w.meaningVi)}</p>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button onclick="speakText('${escapeHtml(w.word)}')" class="scrap-btn w-8 h-8 rounded-xl bg-white text-xs font-bold cursor-pointer" title="Nghe phát âm">🔊</button>
+                            <button onclick="openWordDetailModal('${w.id}')" class="scrap-btn px-2.5 py-1.5 rounded-xl bg-[#f3c6c9] text-xs font-extrabold cursor-pointer">Xem</button>
+                        </div>
+                    </div>
+                `).join("");
+            }
+        }
+
+        function startQuickReview() {
+            if (!state.words.length) {
+                showToast("Kho từ đang trống! Hãy thêm từ mới trước khi ôn nhanh.", "🌱");
+                openAddWordModal();
+                return;
+            }
+            switchTab("review");
+            startSmartReviewSession();
+        }
+
+        // ---------------------------------------------------------------------
+        // 6. QUẢN LÝ BỘ TỪ VỰNG & CRUD TỪ VỰNG
+        // ---------------------------------------------------------------------
+        function renderDeckPills() {
+            const box = document.getElementById("deckPillsContainer");
+            box.innerHTML = state.customDecks.map(deck => {
+                const count = state.words.filter(w => w.deck === deck).length;
+                const isDefault = DEFAULT_DECKS.includes(deck);
+                return `
+                    <div class="inline-flex items-center gap-2 bg-[#fff8e6] border-2 border-[#2c1813] rounded-2xl px-3.5 py-1.5 text-xs font-extrabold shadow-[0_2px_0_#2c1813]">
+                        <button onclick="filterByDeckQuick('${escapeHtml(deck)}')" class="hover:text-[#78131c] cursor-pointer">
+                            🧺 ${escapeHtml(deck)} <span class="bg-[#78131c] text-[#f9edc9] px-1.5 py-0.5 rounded-full ml-1">${count}</span>
+                        </button>
+                        ${!isDefault ? `<button onclick="deleteCustomDeck('${escapeHtml(deck)}')" class="text-[#78131c] hover:scale-110 cursor-pointer" title="Xóa bộ từ">✕</button>` : ""}
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function filterByDeckQuick(deckName) {
+            document.getElementById("filterDeckSelect").value = deckName;
+            renderWordManager();
+        }
+
+        function createNewDeck() {
+            const input = document.getElementById("newDeckInput");
+            const name = input.value.trim();
+            if (!name) {
+                showToast("Vui lòng nhập tên bộ từ vựng!", "⚠️");
+                return;
+            }
+            if (state.customDecks.some(d => d.toLowerCase() === name.toLowerCase())) {
+                showToast("Tên bộ từ này đã tồn tại!", "⚠️");
+                return;
+            }
+            state.customDecks.push(name);
+            input.value = "";
+            saveMetaToCloud();
+            refreshEntireUI();
+            showToast(`Đã tạo bộ từ mới: "${name}"`, "🧺");
+        }
+
+        async function deleteCustomDeck(deckName) {
+            const ok = await askConfirm("Xóa bộ từ vựng?", `Bạn muốn xóa bộ "${deckName}"? Các từ bên trong sẽ được chuyển về bộ "New Words".`);
+            if (!ok) return;
+            state.customDecks = state.customDecks.filter(d => d !== deckName);
+            for (const w of state.words) {
+                if (w.deck === deckName) {
+                    w.deck = "New Words";
+                    await saveWordToCloud(w);
+                }
+            }
+            saveMetaToCloud();
+            refreshEntireUI();
+            showToast(`Đã xóa bộ từ "${deckName}"`, "🗑️");
+        }
+
+        function getFilteredWords() {
+            const q = (document.getElementById("filterSearchInput")?.value || "").trim().toLowerCase();
+            const deck = document.getElementById("filterDeckSelect")?.value || "ALL";
+            const pos = document.getElementById("filterPosSelect")?.value || "ALL";
+            const status = document.getElementById("filterStatusSelect")?.value || "ALL";
+
+            return state.words.filter(w => {
+                if (deck !== "ALL" && w.deck !== deck) return false;
+                if (pos !== "ALL" && w.pos !== pos) return false;
+                if (status === "FAV" && !w.favorite) return false;
+                if (status !== "ALL" && status !== "FAV" && w.status !== status) return false;
+                if (q) {
+                    const hay = `${w.word} ${w.meaningVi} ${w.defEn} ${w.synonyms} ${w.collocations} ${w.notes}`.toLowerCase();
+                    if (!hay.includes(q)) return false;
+                }
+                return true;
+            });
+        }
+
+        function renderWordManager() {
+            const list = getFilteredWords();
+            const grid = document.getElementById("managerWordsGrid");
+
+            if (!list.length) {
+                grid.innerHTML = `
+                    <div class="col-span-full bg-[#fff8e6] border-2 border-dashed border-[#2c1813]/40 rounded-3xl p-8 text-center space-y-2">
+                        <p class="font-display font-bold text-lg text-[#78131c]">Không tìm thấy từ vựng phù hợp</p>
+                        <p class="text-xs font-bold text-[#2c1813]/75">Hãy thử thay đổi bộ lọc hoặc nhấn "Thêm từ mới chi tiết" để gieo thêm từ vào vườn.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const statusBadgeMap = {
+                new: { label: "🌱 New", cls: "bg-[#f3c6c9] text-[#2c1813]" },
+                learning: { label: "🍰 Learning", cls: "bg-[#edd79c] text-[#2c1813]" },
+                reviewing: { label: "🍓 Reviewing", cls: "bg-[#78131c] text-[#f9edc9]" },
+                mastered: { label: "🌿 Mastered", cls: "bg-[#96b95b] text-[#2c1813]" }
+            };
+
+            grid.innerHTML = list.map(w => {
+                const st = statusBadgeMap[w.status] || statusBadgeMap.new;
+                return `
+                    <div class="scrap-subcard rounded-3xl p-4 sm:p-5 flex flex-col justify-between gap-3">
+                        <div class="space-y-2">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <h3 class="font-display font-bold text-xl text-[#78131c]">${escapeHtml(w.word)}</h3>
+                                        <span class="text-xs font-bold text-[#2c1813]/70">${escapeHtml(w.ipa || "")}</span>
+                                        <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-[#f9edc9] border border-[#2c1813]">${escapeHtml(w.pos)}</span>
+                                    </div>
+                                    <p class="font-extrabold text-sm sm:text-base text-[#2c1813] mt-1">${escapeHtml(w.meaningVi)}</p>
+                                </div>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <button onclick="toggleFavoriteWord('${w.id}')" class="scrap-btn w-8 h-8 rounded-xl bg-white text-sm cursor-pointer" title="Yêu thích">
+                                        ${w.favorite ? "⭐" : "☆"}
+                                    </button>
+                                    <button onclick="speakText('${escapeHtml(w.word)}')" class="scrap-btn w-8 h-8 rounded-xl bg-[#96b95b] text-xs cursor-pointer" title="Phát âm">
+                                        🔊
+                                    </button>
+                                </div>
+                            </div>
+
+                            ${w.defEn ? `<p class="text-xs font-semibold text-[#2c1813]/80 italic">"${escapeHtml(w.defEn)}"</p>` : ""}
+
+                            ${w.exampleEn ? `
+                                <div class="bg-[#f9edc9]/75 border border-[#2c1813]/30 rounded-2xl p-2.5 text-xs space-y-0.5">
+                                    <p class="font-bold text-[#2c1813]">📝 ${escapeHtml(w.exampleEn)}</p>
+                                    ${w.exampleVi ? `<p class="text-[#2c1813]/75">→ ${escapeHtml(w.exampleVi)}</p>` : ""}
+                                </div>
+                            ` : ""}
+
+                            <div class="flex flex-wrap gap-1.5 text-[11px] font-bold pt-1">
+                                ${w.synonyms ? `<span class="bg-white px-2 py-0.5 rounded-lg border border-[#2c1813]/40">≈ ${escapeHtml(w.synonyms)}</span>` : ""}
+                                ${w.antonyms ? `<span class="bg-white px-2 py-0.5 rounded-lg border border-[#2c1813]/40">≠ ${escapeHtml(w.antonyms)}</span>` : ""}
+                                ${w.collocations ? `<span class="bg-white px-2 py-0.5 rounded-lg border border-[#2c1813]/40">🔗 ${escapeHtml(w.collocations)}</span>` : ""}
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t-2 border-dashed border-[#2c1813]/25">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border border-[#2c1813] ${st.cls}">${st.label}</span>
+                                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white border border-[#2c1813]/50">🧺 ${escapeHtml(w.deck)}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="openEditWordModal('${w.id}')" class="scrap-btn px-3 py-1 rounded-xl bg-white text-xs font-extrabold cursor-pointer">✏️ Sửa</button>
+                                <button onclick="confirmDeleteWord('${w.id}')" class="scrap-btn px-3 py-1 rounded-xl bg-[#f3c6c9] text-[#78131c] text-xs font-extrabold cursor-pointer">🗑️ Xóa</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function openAddWordModal() {
+            document.getElementById("wordEditorForm").reset();
+            document.getElementById("editWordId").value = "";
+            document.getElementById("wordModalTitle").textContent = "🌱 Gieo hạt từ vựng mới";
+            document.getElementById("duplicateWordBanner").classList.add("hidden");
+            state.duplicateMatchId = null;
+            document.getElementById("wordEditorModal").classList.remove("hidden");
+        }
+
+        function openEditWordModal(wordId) {
+            const w = state.words.find(item => item.id === wordId);
+            if (!w) {
+                showToast("Không tìm thấy từ vựng cần chỉnh sửa!", "⚠️");
+                return;
+            }
+            document.getElementById("wordEditorForm").reset();
+            document.getElementById("editWordId").value = w.id;
+            document.getElementById("wordModalTitle").textContent = `✏️ Chỉnh sửa từ: "${w.word}"`;
+            document.getElementById("duplicateWordBanner").classList.add("hidden");
+            state.duplicateMatchId = null;
+
+            document.getElementById("fieldWord").value = w.word || "";
+            document.getElementById("fieldIpa").value = w.ipa || "";
+            document.getElementById("fieldPos").value = w.pos || "noun";
+            document.getElementById("fieldMeaningVi").value = w.meaningVi || "";
+            document.getElementById("fieldDeck").value = w.deck || "New Words";
+            document.getElementById("fieldDefEn").value = w.defEn || "";
+            document.getElementById("fieldExampleEn").value = w.exampleEn || "";
+            document.getElementById("fieldExampleVi").value = w.exampleVi || "";
+            document.getElementById("fieldSynonyms").value = w.synonyms || "";
+            document.getElementById("fieldAntonyms").value = w.antonyms || "";
+            document.getElementById("fieldCollocations").value = w.collocations || "";
+            document.getElementById("fieldNotes").value = w.notes || "";
+            document.getElementById("fieldStatus").value = w.status || "new";
+            document.getElementById("fieldFavorite").checked = Boolean(w.favorite);
+
+            document.getElementById("wordEditorModal").classList.remove("hidden");
+        }
+
+        function closeWordEditorModal() {
+            document.getElementById("wordEditorModal").classList.add("hidden");
+        }
+
+        async function toggleFavoriteWord(wordId) {
+            const w = state.words.find(item => item.id === wordId);
+            if (!w) return;
+            w.favorite = !w.favorite;
+            await saveWordToCloud(w);
+            showToast(w.favorite ? `Đã thêm "${w.word}" vào danh sách yêu thích!` : `Đã bỏ yêu thích "${w.word}".`, w.favorite ? "⭐" : "☆");
+        }
+
+        async function confirmDeleteWord(wordId) {
+            const w = state.words.find(item => item.id === wordId);
+            if (!w) return;
+            const ok = await askConfirm("Xóa từ vựng?", `Bạn có chắc muốn xóa từ "${w.word}" khỏi khu vườn từ vựng không?`);
+            if (!ok) return;
+            await deleteWordFromCloud(wordId);
+            showToast(`Đã xóa từ "${w.word}".`, "🗑️");
+        }
+
+        function openBulkModal() {
+            populateAllDeckDropdowns();
+            document.getElementById("bulkTextarea").value = "";
+            document.getElementById("bulkImportModal").classList.remove("hidden");
+        }
+
+        function closeBulkModal() {
+            document.getElementById("bulkImportModal").classList.add("hidden");
+        }
+
+        async function processBulkImport() {
+            const rawLines = (document.getElementById("bulkTextarea").value || "").split("\n");
+            const targetDeck = document.getElementById("bulkDeckSelect").value || "New Words";
+            let addedCount = 0;
+
+            for (const line of rawLines) {
+                const trimmed = line.trim();
+                if (!trimmed) continue;
+                const parts = trimmed.split("|").map(p => p.trim());
+                const word = parts[0] || "";
+                const posRaw = (parts[1] || "noun").toLowerCase();
+                const meaningVi = parts[2] || "";
+                const exampleEn = parts[3] || "";
+
+                if (!word || !meaningVi) continue;
+
+                let pos = "noun";
+                if (posRaw.includes("verb") && !posRaw.includes("adverb")) pos = "verb";
+                else if (posRaw.includes("adj")) pos = "adjective";
+                else if (posRaw.includes("adv")) pos = "adverb";
+                else if (posRaw.includes("prep")) pos = "preposition";
+                else if (posRaw.includes("phrase") || posRaw.includes("idiom")) pos = "phrase";
+
+                const newWordObj = {
+                    id: `w_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                    isSample: false,
+                    word,
+                    ipa: "",
+                    pos,
+                    meaningVi,
+                    defEn: "",
+                    exampleEn,
+                    exampleVi: "",
+                    synonyms: "",
+                    antonyms: "",
+                    collocations: "",
+                    notes: "",
+                    deck: targetDeck,
+                    status: "new",
+                    favorite: false,
+                    wrongCount: 0,
+                    lastReviewed: 0,
+                    createdAt: Date.now() + addedCount
+                };
+
+                await saveWordToCloud(newWordObj);
+                addedCount++;
+            }
+
+            closeBulkModal();
+            if (addedCount > 0) {
+                showToast(`Đã nhập thành công ${addedCount} từ mới vào bộ "${targetDeck}"!`, "📥");
+            } else {
+                showToast("Không có dòng hợp lệ nào để nhập. Hãy kiểm tra định dạng: từ | loại từ | nghĩa Việt", "⚠️");
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // 7. FLASHCARD TƯƠNG TÁC LẬT 3D
+        // ---------------------------------------------------------------------
+        function initFlashcards(preserveIndex = false) {
+            const deck = document.getElementById("fcDeckSelect")?.value || "ALL";
+            const mode = document.getElementById("fcFilterMode")?.value || "all";
+
+            const filtered = state.words.filter(w => {
+                if (deck !== "ALL" && w.deck !== deck) return false;
+                if (mode === "unmastered" && w.status === "mastered") return false;
+                if (mode === "fav" && !w.favorite) return false;
+                return true;
+            });
+
+            state.fcList = filtered;
+            if (!preserveIndex || state.fcIndex >= state.fcList.length) {
+                state.fcIndex = 0;
+            }
+            renderCurrentFlashcard();
+        }
+
+        function flipFlashcard() {
+            const card = document.getElementById("flashcardContainer");
+            if (!card || !state.fcList.length) return;
+            card.classList.toggle("flashcard-flipped");
+        }
+
+        function renderCurrentFlashcard() {
+            const card = document.getElementById("flashcardContainer");
+            if (card) card.classList.remove("flashcard-flipped");
+
+            const counterBadge = document.getElementById("fcCounterBadge");
+            const statusBadge = document.getElementById("fcStatusBadge");
+            const frontPos = document.getElementById("fcFrontPos");
+            const frontWord = document.getElementById("fcFrontWord");
+            const frontIpa = document.getElementById("fcFrontIpa");
+            const backWord = document.getElementById("fcBackWord");
+            const backIpa = document.getElementById("fcBackIpa");
+            const backDetails = document.getElementById("fcBackDetails");
+
+            if (!state.fcList.length) {
+                counterBadge.textContent = "Thẻ 0 / 0";
+                statusBadge.textContent = "Trạng thái: ---";
+                frontPos.textContent = "---";
+                frontWord.textContent = "Chưa có thẻ phù hợp";
+                frontIpa.textContent = "Hãy thêm từ mới hoặc đổi bộ lọc";
+                backWord.textContent = "---";
+                backIpa.textContent = "";
+                backDetails.innerHTML = `<p class="text-center font-bold text-[#2c1813]/75">Không có từ vựng nào trong lựa chọn hiện tại.</p>`;
+                return;
+            }
+
+            const w = state.fcList[state.fcIndex];
+            counterBadge.textContent = `Thẻ ${state.fcIndex + 1} / ${state.fcList.length}`;
+            statusBadge.textContent = `Trạng thái: ${w.status.toUpperCase()}`;
+
+            frontPos.textContent = w.pos || "word";
+            frontWord.textContent = w.word;
+            frontIpa.textContent = state.fcEnglishOnly ? "(Chế độ chỉ hiện Tiếng Anh)" : (w.ipa || "");
+
+            backWord.textContent = w.word;
+            backIpa.textContent = w.ipa || "";
+
+            if (state.fcEnglishOnly) {
+                backDetails.innerHTML = `
+                    <div class="bg-[#f9edc9] p-3.5 rounded-2xl border-2 border-[#2c1813] text-center space-y-1">
+                        <p class="text-xs font-extrabold uppercase text-[#78131c]">Đang bật chế độ tự kiểm tra nghĩa</p>
+                        <p class="font-display font-bold text-lg text-[#2c1813]">${escapeHtml(w.meaningVi)}</p>
+                    </div>
+                    ${w.defEn ? `<p><strong>Definition:</strong> ${escapeHtml(w.defEn)}</p>` : ""}
+                    ${w.exampleEn ? `<p><strong>Example:</strong> ${escapeHtml(w.exampleEn)}</p>` : ""}
+                `;
+            } else {
+                backDetails.innerHTML = `
+                    <div class="bg-[#f9edc9] p-3 rounded-2xl border-2 border-[#2c1813]">
+                        <p class="text-[11px] font-extrabold uppercase text-[#78131c]">Nghĩa tiếng Việt</p>
+                        <p class="font-display font-bold text-lg text-[#2c1813]">${escapeHtml(w.meaningVi)}</p>
+                    </div>
+                    ${w.defEn ? `<p class="text-xs font-semibold"><strong>Definition:</strong> ${escapeHtml(w.defEn)}</p>` : ""}
+                    ${w.exampleEn ? `
+                        <div class="bg-white p-2.5 rounded-xl border border-[#2c1813]/40 text-xs">
+                            <p class="font-bold">📝 ${escapeHtml(w.exampleEn)}</p>
+                            ${w.exampleVi ? `<p class="text-[#2c1813]/75 mt-0.5">→ ${escapeHtml(w.exampleVi)}</p>` : ""}
+                        </div>
+                    ` : ""}
+                    ${w.collocations ? `<p class="text-xs font-bold"><strong>Collocations:</strong> ${escapeHtml(w.collocations)}</p>` : ""}
+                    ${w.notes ? `<p class="text-xs font-semibold text-[#2c1813]/80"><strong>Notes:</strong> ${escapeHtml(w.notes)}</p>` : ""}
+                `;
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // MỤC 11: AI VOCABULARY ASSISTANT – TRA CỨU & TỰ ĐỘNG ĐIỀN 11 TRƯỜNG
+        // ---------------------------------------------------------------------
+        function checkDuplicateWordLive(rawVal) {
+            const cleaned = String(rawVal || "").trim().toLowerCase();
+            const currentEditId = document.getElementById("editWordId").value;
+            const banner = document.getElementById("duplicateWordBanner");
+            if (!cleaned) {
+                banner.classList.add("hidden");
+                state.duplicateMatchId = null;
+                return null;
+            }
+            const found = state.words.find(w => w.word.trim().toLowerCase() === cleaned && w.id !== currentEditId);
+            if (found) {
+                state.duplicateMatchId = found.id;
+                document.getElementById("duplicateWordText").textContent = `⚠️ Từ "${found.word}" đã tồn tại trong bộ "${found.deck}"!`;
+                banner.classList.remove("hidden");
+                return found;
+            } else {
+                state.duplicateMatchId = null;
+                banner.classList.add("hidden");
+                return null;
+            }
+        }
+
+        function loadExistingDuplicateForEdit() {
+            if (state.duplicateMatchId) {
+                openEditWordModal(state.duplicateMatchId);
+                document.getElementById("duplicateWordBanner").classList.add("hidden");
+            }
+        }
+
+        async function fetchAiDictionaryData(queryWord, isRegenerate = false) {
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemPrompt = `You are a lexicographer and bilingual English-Vietnamese dictionary expert (Oxford/Cambridge standard).
+Analyze the user's English word or phrase accurately.
+Rules:
+1. Never fabricate IPA, synonyms, antonyms, or collocations.
+2. Provide accurate IPA prioritizing UK pronunciation and include US pronunciation if different (e.g., "UK: /.../ | US: /.../").
+3. Determine the primary part of speech (one of: noun, verb, adjective, adverb, preposition, phrase, other). If the word commonly has multiple parts of speech or multiple meanings, clearly separate and explain all common cases in Vietnamese meaning.
+4. English definition must be clear, natural, and suitable for CEFR A1–B2 learners.
+5. Example sentence must be natural and accurate, followed by an accurate Vietnamese translation.
+6. Synonyms and Antonyms must include Vietnamese meanings in parentheses. If there are no appropriate antonyms (for example concrete nouns like "environment" or "table"), explicitly state "Không có từ trái nghĩa trực tiếp phù hợp" instead of inventing one.
+7. Collocations must list real, common natural collocations with Vietnamese meanings.
+8. Notes must include usage context, common learner mistakes, dependent prepositions, or grammatical structures.`;
+
+            const userQuery = `${isRegenerate ? "Provide a fresh, nuanced dictionary entry with a different natural example sentence for" : "Look up complete dictionary entry for"}: "${queryWord}"`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            englishWord: { type: "STRING" },
+                            ipa: { type: "STRING" },
+                            partOfSpeech: { type: "STRING" },
+                            vietnameseMeaning: { type: "STRING" },
+                            englishDefinition: { type: "STRING" },
+                            exampleSentence: { type: "STRING" },
+                            vietnameseTranslation: { type: "STRING" },
+                            synonyms: { type: "STRING" },
+                            antonyms: { type: "STRING" },
+                            collocations: { type: "STRING" },
+                            notes: { type: "STRING" }
+                        },
+                        required: [
+                            "englishWord", "ipa", "partOfSpeech", "vietnameseMeaning",
+                            "englishDefinition", "exampleSentence", "vietnameseTranslation",
+                            "synonyms", "antonyms", "collocations", "notes"
+                        ]
+                    }
+                }
+            };
+
+            const delays = [1000, 2000, 4000];
+            for (let attempt = 0; attempt <= delays.length; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    const result = await response.json();
+                    const rawText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!rawText) throw new Error("Empty AI response");
+                    return JSON.parse(rawText);
+                } catch (err) {
+                    if (attempt === delays.length) throw err;
+                    await new Promise(r => setTimeout(r, delays[attempt]));
+                }
+            }
+        }
+
+        function applyAiResultToModalFields(data) {
+            document.getElementById("fieldWord").value = data.englishWord || "";
+            document.getElementById("fieldIpa").value = data.ipa || "";
+
+            const rawPos = (data.partOfSpeech || "").toLowerCase();
+            let mappedPos = "other";
+            if (rawPos.includes("noun")) mappedPos = "noun";
+            else if (rawPos.includes("verb") && !rawPos.includes("adverb")) mappedPos = "verb";
+            else if (rawPos.includes("adjective")) mappedPos = "adjective";
+            else if (rawPos.includes("adverb")) mappedPos = "adverb";
+            else if (rawPos.includes("preposition")) mappedPos = "preposition";
+            else if (rawPos.includes("phrase") || rawPos.includes("idiom")) mappedPos = "phrase";
+            document.getElementById("fieldPos").value = mappedPos;
+
+            document.getElementById("fieldMeaningVi").value = data.vietnameseMeaning || "";
+            document.getElementById("fieldDefEn").value = data.englishDefinition || "";
+            document.getElementById("fieldExampleEn").value = data.exampleSentence || "";
+            document.getElementById("fieldExampleVi").value = data.vietnameseTranslation || "";
+            document.getElementById("fieldSynonyms").value = data.synonyms || "";
+            document.getElementById("fieldAntonyms").value = data.antonyms || "";
+            document.getElementById("fieldCollocations").value = data.collocations || "";
+            document.getElementById("fieldNotes").value = data.notes || "";
+
+            checkDuplicateWordLive(data.englishWord || "");
+        }
+
+        async function runAiVocabularyLookup(event) {
+            if (event) event.preventDefault();
+            const quickInput = document.getElementById("aiQuickSearchInput");
+            const query = quickInput.value.trim();
+            if (!query) {
+                showToast("Vui lòng nhập từ hoặc cụm từ tiếng Anh cần tra cứu!", "⚠️");
+                return;
+            }
+
+            const mainBtn = document.getElementById("aiLookupMainBtn");
+            const origText = mainBtn.innerHTML;
+            mainBtn.disabled = true;
+            mainBtn.innerHTML = "⏳ Đang tra cứu AI...";
+
+            try {
+                const aiData = await fetchAiDictionaryData(query, false);
+                openAddWordModal();
+                applyAiResultToModalFields(aiData);
+                quickInput.value = "";
+                showToast(`AI đã tự động điền đủ 11 mục cho "${aiData.englishWord}"! Hãy kiểm tra và lưu nhé.`, "✨");
+            } catch (err) {
+                showToast("Không thể kết nối AI Dictionary lúc này. Vui lòng thử lại sau giây lát!", "❌");
+            } finally {
+                mainBtn.disabled = false;
+                mainBtn.innerHTML = origText;
+            }
+        }
+
+        async function triggerModalAiLookup(isRegenerate = false) {
+            const query = document.getElementById("fieldWord").value.trim();
+            if (!query) {
+                showToast("Hãy nhập từ tiếng Anh vào ô '1. English Word' trước!", "⚠️");
+                return;
+            }
+            const btn = document.getElementById(isRegenerate ? "modalAiRegenerateBtn" : "modalAiLookupBtn");
+            const origLabel = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = "⏳ Đang tạo...";
+
+            try {
+                const aiData = await fetchAiDictionaryData(query, isRegenerate);
+                applyAiResultToModalFields(aiData);
+                showToast(isRegenerate ? `Đã tạo lại nội dung AI cho "${aiData.englishWord}"!` : `AI đã điền xong 11 mục cho "${aiData.englishWord}"!`, "✨");
+            } catch (err) {
+                showToast("AI phản hồi chậm hoặc mất kết nối. Bạn vẫn có thể nhập/sửa thủ công.", "❌");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = origLabel;
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // MỤC 12 & 13: QUẢN LÝ TÀI KHOẢN CÁ NHÂN & PROFILE
+        // ---------------------------------------------------------------------
+        function openAuthProfileModal() {
+            updateAccountUiState();
+            document.getElementById("authProfileModal").classList.remove("hidden");
+        }
+
+        function closeAuthProfileModal() {
+            document.getElementById("authProfileModal").classList.add("hidden");
+        }
+
+        function switchAuthMode(mode) {
+            const loginForm = document.getElementById("authLoginForm");
+            const registerForm = document.getElementById("authRegisterForm");
+            const resetForm = document.getElementById("authResetForm");
+            if (loginForm) loginForm.classList.toggle("hidden", mode !== "login");
+            if (registerForm) registerForm.classList.toggle("hidden", mode !== "register");
+            if (resetForm) resetForm.classList.toggle("hidden", mode !== "reset");
+
+            const tabLogin = document.getElementById("authTabLogin");
+            const tabRegister = document.getElementById("authTabRegister");
+            const tabReset = document.getElementById("authTabReset");
+            if (tabLogin) tabLogin.className = `flex-1 py-2 rounded-xl font-extrabold text-xs sm:text-sm cursor-pointer ${mode === "login" ? "bg-[#96b95b]" : "bg-transparent"}`;
+            if (tabRegister) tabRegister.className = `flex-1 py-2 rounded-xl font-extrabold text-xs sm:text-sm cursor-pointer ${mode === "register" ? "bg-[#96b95b]" : "bg-transparent"}`;
+            if (tabReset) tabReset.className = `flex-1 py-2 rounded-xl font-extrabold text-xs sm:text-sm cursor-pointer ${mode === "reset" ? "bg-[#96b95b]" : "bg-transparent"}`;
+        }
+
+        function updateAccountUiState() {
+            const isLoggedIn = Boolean(state.userId && state.username);
+            const navBtn = document.getElementById("navAccountBtn");
+            const guestView = document.getElementById("authGuestView");
+            const signedView = document.getElementById("authSignedInView");
+            const settingsEmail = document.getElementById("settingsAccountEmail");
+            const settingsUid = document.getElementById("settingsUserId");
+
+            if (isLoggedIn) {
+                if (navBtn) navBtn.textContent = `👤 @${state.username}`;
+                if (guestView) guestView.classList.add("hidden");
+                if (signedView) signedView.classList.remove("hidden");
+
+                document.getElementById("profileUsernameLarge").textContent = `@${state.username}`;
+                document.getElementById("profileUidVal").textContent = state.userId;
+                document.getElementById("profileStreakVal").textContent = state.streak.count || 1;
+                document.getElementById("profileDisplayNameInput").value = state.profile.displayName || state.username;
+                document.getElementById("profileDailyGoalInput").value = state.profile.dailyGoal || 10;
+                document.getElementById("profTotalWords").textContent = state.words.length;
+                document.getElementById("profMasteredWords").textContent = state.words.filter(w => w.status === "mastered").length;
+                document.getElementById("profGamesPlayed").textContent = state.profile.gamesPlayed || 0;
+
+                if (settingsEmail) settingsEmail.textContent = `@${state.username}`;
+                if (settingsUid) settingsUid.textContent = state.userId;
+            } else {
+                if (navBtn) navBtn.textContent = "👤 Đăng nhập";
+                if (guestView) guestView.classList.remove("hidden");
+                if (signedView) signedView.classList.add("hidden");
+                if (settingsEmail) settingsEmail.textContent = "Đã đăng xuất (Khách)";
+            }
+        }
+
+        function showNewAccountBanner(username) {
+            if (!username) return;
+            const banner = document.getElementById("newAccountBanner");
+            const display = document.getElementById("newlyCreatedUsernameDisplay");
+            if (display) display.textContent = `@${username}`;
+            if (banner) banner.classList.remove("hidden");
+        }
+
+        function dismissNewAccountBanner() {
+            document.getElementById("newAccountBanner")?.classList.add("hidden");
+        }
+
+        function copyUsernameToClipboard(rawUsername) {
+            const clean = String(rawUsername || state.username || "").replace(/^@/, "").trim();
+            if (!clean) return;
+            const tempInput = document.createElement("input");
+            tempInput.value = clean;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand("copy");
+            } catch (_) {}
+            document.body.removeChild(tempInput);
+            showToast(`Đã sao chép Username: ${clean}`, "📋");
+        }
+
+        async function handleUsernameLogin(e) {
+            e.preventDefault();
+            const inputEl = document.getElementById("loginUsernameInput");
+            const errEl = document.getElementById("loginErrorMsg");
+            const btn = document.getElementById("loginUsernameSubmitBtn");
+            const targetUsername = sanitizeUsernameInput(inputEl.value);
+
+            errEl.classList.add("hidden");
+            if (!targetUsername) {
+                errEl.textContent = "Account not found";
+                errEl.classList.remove("hidden");
+                return;
+            }
+
+            const origLabel = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = "Đang kiểm tra...";
+
+            try {
+                const record = await lookupUsernameRecord(targetUsername);
+                if (!record || !record.ownerUid) {
+                    // Không tự động tạo tài khoản mới khi người dùng nhập sai username
+                    errEl.textContent = "Account not found";
+                    errEl.classList.remove("hidden");
+                    showToast("Account not found", "⚠️");
+                    return;
+                }
+
+                state.username = record.username || targetUsername;
+                state.userId = record.ownerUid;
+                try { sessionStorage.setItem(ACTIVE_SESSION_KEY, record.ownerUid); } catch (_) {}
+
+                attachUserListeners(record.ownerUid);
+                inputEl.value = "";
+                closeAuthProfileModal();
+                showToast(`Chào mừng trở lại, @${state.username}! Toàn bộ dữ liệu đã được khôi phục.`, "✅");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = origLabel;
+            }
+        }
+
+        async function handleCreateNewUsernameAccount() {
+            const btn = document.getElementById("createNewUsernameAccountBtn");
+            if (btn) btn.disabled = true;
+
+            try {
+                if (state.unsubWords) { state.unsubWords(); state.unsubWords = null; }
+                if (state.unsubMeta) { state.unsubMeta(); state.unsubMeta = null; }
+
+                const newUid = state.authInstance?.currentUser?.uid || `user_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+                state.words = [];
+                state.customDecks = [...DEFAULT_DECKS];
+                state.userId = newUid;
+                try { sessionStorage.setItem(ACTIVE_SESSION_KEY, newUid); } catch (_) {}
+
+                const createdUsername = await reserveUniqueUsernameAndProvision(newUid);
+                attachUserListeners(newUid);
+                updateAccountUiState();
+                refreshEntireUI();
+                showNewAccountBanner(createdUsername);
+                closeAuthProfileModal();
+                showToast(`Đã tạo tài khoản mới: ${createdUsername} và tự động đăng nhập!`, "🎉");
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        async function saveUserProfileSettings(e) {
+            e.preventDefault();
+            const newName = document.getElementById("profileDisplayNameInput").value.trim();
+            const newGoal = parseInt(document.getElementById("profileDailyGoalInput").value, 10) || 10;
+            state.profile.displayName = newName || state.username;
+            state.profile.dailyGoal = newGoal;
+            await saveMetaToCloud();
+            updateAccountUiState();
+            showToast("Đã cập nhật hồ sơ & mục tiêu học tập!", "💾");
+        }
+
+        async function handleUserSignOut() {
+            if (state.unsubWords) { state.unsubWords(); state.unsubWords = null; }
+            if (state.unsubMeta) { state.unsubMeta(); state.unsubMeta = null; }
+
+            try { sessionStorage.removeItem(ACTIVE_SESSION_KEY); } catch (_) {}
+            state.userId = null;
+            state.username = "";
+            state.words = [];
+            state.customDecks = [...DEFAULT_DECKS];
+
+            updateAccountUiState();
+            refreshEntireUI();
+            switchAuthMode("login");
+            document.getElementById("loginErrorMsg")?.classList.add("hidden");
+            document.getElementById("authProfileModal")?.classList.remove("hidden");
+            showToast("Bạn đã LOG OUT. Nhập Username cũ để đăng nhập lại hoặc tạo tài khoản mới.", "🔒");
+        }
+
+        async function saveWordFromModal(e) {
+            e.preventDefault();
+            const existingId = document.getElementById("editWordId").value;
+            const rawWord = document.getElementById("fieldWord").value.trim();
+
+            // Kiểm tra từ trùng lặp trước khi lưu nếu đang thêm mới
+            if (!existingId) {
+                const dup = state.words.find(w => w.word.trim().toLowerCase() === rawWord.toLowerCase());
+                if (dup) {
+                    const proceed = await askConfirm(
+                        "Phát hiện từ trùng lặp!",
+                        `Từ "${dup.word}" đã có trong bộ "${dup.deck}". Bạn vẫn muốn lưu thêm một bản mới chứ?`
+                    );
+                    if (!proceed) return;
+                }
+            }
+
+            const prevObj = existingId ? state.words.find(w => w.id === existingId) : null;
+
+            const wordObj = {
+                id: existingId || `w_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                isSample: false,
+                word: rawWord,
+                ipa: document.getElementById("fieldIpa").value.trim(),
+                pos: document.getElementById("fieldPos").value,
+                meaningVi: document.getElementById("fieldMeaningVi").value.trim(),
+                deck: document.getElementById("fieldDeck").value || "New Words",
+                defEn: document.getElementById("fieldDefEn").value.trim(),
+                exampleEn: document.getElementById("fieldExampleEn").value.trim(),
+                exampleVi: document.getElementById("fieldExampleVi").value.trim(),
+                synonyms: document.getElementById("fieldSynonyms").value.trim(),
+                antonyms: document.getElementById("fieldAntonyms").value.trim(),
+                collocations: document.getElementById("fieldCollocations").value.trim(),
+                notes: document.getElementById("fieldNotes").value.trim(),
+                status: document.getElementById("fieldStatus").value,
+                favorite: document.getElementById("fieldFavorite").checked,
+                wrongCount: prevObj ? (prevObj.wrongCount || 0) : 0,
+                lastReviewed: prevObj ? (prevObj.lastReviewed || 0) : 0,
+                createdAt: prevObj ? prevObj.createdAt : Date.now()
+            };
+
+            await saveWordToCloud(wordObj);
+            closeWordEditorModal();
+            showToast(existingId ? `Đã cập nhật từ "${wordObj.word}"!` : `Đã lưu "${wordObj.word}" vào bộ "${wordObj.deck}"!`, "✅");
+        }
+
+        function nextFlashcard() {
+            if (!state.fcList.length) return;
+            state.fcIndex = (state.fcIndex + 1) % state.fcList.length;
+            renderCurrentFlashcard();
+        }
+
+        function prevFlashcard() {
+            if (!state.fcList.length) return;
+            state.fcIndex = (state.fcIndex - 1 + state.fcList.length) % state.fcList.length;
+            renderCurrentFlashcard();
+        }
+
+        function shuffleFlashcards() {
+            if (state.fcList.length < 2) return;
+            for (let i = state.fcList.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [state.fcList[i], state.fcList[j]] = [state.fcList[j], state.fcList[i]];
+            }
+            state.fcIndex = 0;
+            renderCurrentFlashcard();
+            showToast("Đã xáo trộn ngẫu nhiên thứ tự thẻ!", "🔀");
+        }
+
+        function toggleEnglishOnlyMode() {
+            state.fcEnglishOnly = !state.fcEnglishOnly;
+            const btn = document.getElementById("fcEnOnlyBtn");
+            btn.textContent = `👁️ Chế độ chỉ hiện Tiếng Anh: ${state.fcEnglishOnly ? "BẬT" : "TẮT"}`;
+            btn.classList.toggle("bg-[#96b95b]", state.fcEnglishOnly);
+            btn.classList.toggle("bg-white", !state.fcEnglishOnly);
+            renderCurrentFlashcard();
+        }
+
+        function speakCurrentFlashcard() {
+            if (!state.fcList.length) return;
+            speakText(state.fcList[state.fcIndex].word);
+        }
+
+        async function markFlashcardStatus(newStatus) {
+            if (!state.fcList.length) return;
+            const w = state.fcList[state.fcIndex];
+            w.status = newStatus;
+            w.lastReviewed = Date.now();
+            if (newStatus === "reviewing") w.wrongCount = (w.wrongCount || 0) + 1;
+            await saveWordToCloud(w);
+            showToast(newStatus === "mastered" ? `Đã đánh dấu "${w.word}" là Đã nhớ!` : `Đã đưa "${w.word}" vào danh sách cần ôn!`, newStatus === "mastered" ? "🌿" : "🍓");
+            nextFlashcard();
+        }
+
+        // ---------------------------------------------------------------------
+        // 8. KHU VỰC 6 GAMES TƯƠNG TÁC THỰC TẾ TỪ KHO TỪ CÁ NHÂN
+        // ---------------------------------------------------------------------
+        let speedTimerInterval = null;
+        let matchTimerInterval = null;
+
+        function clearGameTimers() {
+            clearInterval(speedTimerInterval);
+            clearInterval(matchTimerInterval);
+        }
+
+        function getGamePool() {
+            const deck = document.getElementById("gameDeckSelect")?.value || "ALL";
+            const count = parseInt(document.getElementById("gameCountSelect")?.value || "8", 10);
+            let pool = state.words.filter(w => deck === "ALL" || w.deck === deck);
+
+            // Xáo trộn pool
+            for (let i = pool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pool[i], pool[j]] = [pool[j], pool[i]];
+            }
+            return pool.slice(0, Math.min(count, pool.length));
+        }
+
+        function startGame(gameType) {
+            clearGameTimers();
+            const pool = getGamePool();
+            const arena = document.getElementById("activeGameArena");
+
+            if (pool.length < 2) {
+                showToast("Bộ từ này cần ít nhất 2 từ vựng để chơi game! Hãy thêm từ hoặc chọn 'Tất cả bộ từ'.", "⚠️");
+                return;
+            }
+
+            arena.classList.remove("hidden");
+            arena.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+            state.gameSession = {
+                type: gameType,
+                words: pool,
+                index: 0,
+                score: 0,
+                correct: 0,
+                startTime: Date.now()
+            };
+
+            if (gameType === "matching") renderMatchingGame();
+            else if (gameType === "mc") renderMcGameQuestion(false);
+            else if (gameType === "speed") renderMcGameQuestion(true);
+            else if (gameType === "spelling") renderSpellingGameQuestion();
+            else if (gameType === "fill") renderFillBlankQuestion();
+            else if (gameType === "scramble") renderScrambleQuestion();
+        }
+
+        function exitGameArena() {
+            clearGameTimers();
+            document.getElementById("activeGameArena").classList.add("hidden");
+        }
+
+        // GAME 1: WORD MATCHING
+        function renderMatchingGame() {
+            const session = state.gameSession;
+            const pairs = session.words.slice(0, 6); // Tối đa 6 cặp mỗi vòng cho gọn mắt
+            session.totalPairs = pairs.length;
+            session.matchedIds = new Set();
+            session.selectedEn = null;
+            session.selectedVi = null;
+
+            const leftWords = [...pairs].sort(() => Math.random() - 0.5);
+            const rightMeanings = [...pairs].sort(() => Math.random() - 0.5);
+
+            const arena = document.getElementById("activeGameArena");
+            arena.innerHTML = `
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#2c1813]/30 pb-3">
+                    <h3 class="font-display font-bold text-xl text-[#78131c]">🧩 Game 1: Word Matching</h3>
+                    <div class="flex items-center gap-3 text-xs font-extrabold">
+                        <span class="bg-white px-3 py-1 rounded-full border-2 border-[#2c1813]">Thời gian: <span id="matchTimerText">0</span>s</span>
+                        <span class="bg-[#96b95b] px-3 py-1 rounded-full border-2 border-[#2c1813]">Đã ghép: <span id="matchCountText">0</span>/${pairs.length}</span>
+                        <button onclick="exitGameArena()" class="scrap-btn px-3 py-1 rounded-xl bg-white cursor-pointer">Thoát</button>
+                    </div>
+                </div>
+                <p class="text-xs font-bold text-[#2c1813]/80">Nhấn chọn 1 từ tiếng Anh ở cột trái và nghĩa tiếng Việt tương ứng ở cột phải:</p>
+                <div class="grid grid-cols-2 gap-3 sm:gap-5">
+                    <div class="space-y-2.5" id="matchColLeft">
+                        ${leftWords.map(w => `
+                            <button onclick="pickMatchTile('en', '${w.id}')" id="m-en-${w.id}" class="scrap-btn w-full p-3 rounded-2xl bg-white text-left font-display font-bold text-sm sm:text-base text-[#78131c] cursor-pointer">
+                                ${escapeHtml(w.word)}
+                            </button>
+                        `).join("")}
+                    </div>
+                    <div class="space-y-2.5" id="matchColRight">
+                        ${rightMeanings.map(w => `
+                            <button onclick="pickMatchTile('vi', '${w.id}')" id="m-vi-${w.id}" class="scrap-btn w-full p-3 rounded-2xl bg-[#f9edc9] text-left font-bold text-xs sm:text-sm text-[#2c1813] cursor-pointer">
+                                ${escapeHtml(w.meaningVi)}
+                            </button>
+                        `).join("")}
+                    </div>
+                </div>
+            `;
+
+            let sec = 0;
+            matchTimerInterval = setInterval(() => {
+                sec++;
+                const el = document.getElementById("matchTimerText");
+                if (el) el.textContent = sec;
+            }, 1000);
+        }
+
+        async function pickMatchTile(side, id) {
+            const session = state.gameSession;
+            if (!session || session.matchedIds.has(id)) return;
+
+            if (side === "en") {
+                document.querySelectorAll("#matchColLeft button").forEach(b => b.classList.remove("ring-4", "ring-[#96b95b]"));
+                session.selectedEn = id;
+                document.getElementById(`m-en-${id}`)?.classList.add("ring-4", "ring-[#96b95b]");
+            } else {
+                document.querySelectorAll("#matchColRight button").forEach(b => b.classList.remove("ring-4", "ring-[#96b95b]"));
+                session.selectedVi = id;
+                document.getElementById(`m-vi-${id}`)?.classList.add("ring-4", "ring-[#96b95b]");
+            }
+
+            if (session.selectedEn && session.selectedVi) {
+                const enId = session.selectedEn;
+                const viId = session.selectedVi;
+                session.selectedEn = null;
+                session.selectedVi = null;
+
+                if (enId === viId) {
+                    session.matchedIds.add(enId);
+                    session.correct++;
+                    session.score += 100;
+                    const b1 = document.getElementById(`m-en-${enId}`);
+                    const b2 = document.getElementById(`m-vi-${viId}`);
+                    [b1, b2].forEach(b => {
+                        if (b) {
+                            b.classList.remove("ring-4", "ring-[#96b95b]", "bg-white", "bg-[#f9edc9]");
+                            b.classList.add("bg-[#96b95b]", "opacity-60", "pointer-events-none");
+                        }
+                    });
+                    document.getElementById("matchCountText").textContent = session.matchedIds.size;
+
+                    if (session.matchedIds.size >= session.totalPairs) {
+                        clearGameTimers();
+                        const elapsed = Math.round((Date.now() - session.startTime) / 1000);
+                        renderGameSummary(`Hoàn thành ghép ${session.totalPairs} cặp từ trong ${elapsed} giây!`);
+                    }
+                } else {
+                    const wObj = state.words.find(w => w.id === enId);
+                    if (wObj) {
+                        wObj.wrongCount = (wObj.wrongCount || 0) + 1;
+                        saveWordToCloud(wObj);
+                    }
+                    showToast("Chưa khớp! Thử lại nhé.", "❌");
+                    setTimeout(() => {
+                        document.querySelectorAll("#matchColLeft button, #matchColRight button").forEach(b => b.classList.remove("ring-4", "ring-[#96b95b]"));
+                    }, 300);
+                }
+            }
+        }
+
+        // GAME 2 & GAME 6: MULTIPLE CHOICE & SPEED QUIZ
+        function renderMcGameQuestion(isSpeedMode) {
+            clearGameTimers();
+            const session = state.gameSession;
+            if (session.index >= session.words.length) {
+                renderGameSummary(`Bạn đã trả lời đúng ${session.correct}/${session.words.length} câu!`);
+                return;
+            }
+
+            const currentWord = session.words[session.index];
+            // Tạo 3 đáp án nhiễu từ chính kho từ của người dùng
+            const distractors = state.words
+                .filter(w => w.id !== currentWord.id)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3)
+                .map(w => w.meaningVi);
+
+            while (distractors.length < 3) {
+                distractors.push(`(Nghĩa khác #${distractors.length + 1})`);
+            }
+
+            const choices = [currentWord.meaningVi, ...distractors].sort(() => Math.random() - 0.5);
+            const arena = document.getElementById("activeGameArena");
+
+            arena.innerHTML = `
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#2c1813]/30 pb-3">
+                    <h3 class="font-display font-bold text-xl text-[#78131c]">${isSpeedMode ? "⚡ Game 6: Speed Quiz" : "🎯 Game 2: Multiple Choice"}</h3>
+                    <div class="flex items-center gap-2.5 text-xs font-extrabold">
+                        ${isSpeedMode ? `<span class="bg-[#78131c] text-[#f9edc9] px-3 py-1 rounded-full border-2 border-[#2c1813]">⏱️ <span id="speedClock">10</span>s</span>` : ""}
+                        <span class="bg-white px-3 py-1 rounded-full border-2 border-[#2c1813]">Câu ${session.index + 1}/${session.words.length}</span>
+                        <span class="bg-[#96b95b] px-3 py-1 rounded-full border-2 border-[#2c1813]">Điểm: ${session.score}</span>
+                        <button onclick="exitGameArena()" class="scrap-btn px-3 py-1 rounded-xl bg-white cursor-pointer">Thoát</button>
+                    </div>
+                </div>
+
+                <div class="text-center py-4 space-y-2">
+                    <span class="text-xs font-extrabold uppercase px-3 py-0.5 rounded-full bg-[#f3c6c9] border border-[#2c1813]">${escapeHtml(currentWord.pos)}</span>
+                    <div class="flex items-center justify-center gap-2">
+                        <h4 class="font-display font-bold text-3xl sm:text-4xl text-[#78131c]">${escapeHtml(currentWord.word)}</h4>
+                        <button onclick="speakText('${escapeHtml(currentWord.word)}')" class="scrap-btn w-9 h-9 rounded-xl bg-white text-sm cursor-pointer">🔊</button>
+                    </div>
+                    <p class="text-xs font-bold text-[#2c1813]/70">${escapeHtml(currentWord.ipa || "")}</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="mcOptionsBox">
+                    ${choices.map((ch, idx) => `
+                        <button onclick="answerMcChoice(${idx}, '${escapeHtml(ch).replace(/'/g, "\\'")}', ${isSpeedMode})" class="mc-opt-btn scrap-btn p-4 rounded-2xl bg-white hover:bg-[#f9edc9] text-left font-extrabold text-sm text-[#2c1813] cursor-pointer">
+                            ${["A", "B", "C", "D"][idx]}. ${escapeHtml(ch)}
+                        </button>
+                    `).join("")}
+                </div>
+
+                <div id="mcFeedbackBox" class="hidden p-4 rounded-2xl border-2 border-[#2c1813] text-sm space-y-2"></div>
+            `;
+
+            if (isSpeedMode) {
+                let timeLeft = 10;
+                speedTimerInterval = setInterval(() => {
+                    timeLeft--;
+                    const clockEl = document.getElementById("speedClock");
+                    if (clockEl) clockEl.textContent = timeLeft;
+                    if (timeLeft <= 0) {
+                        clearGameTimers();
+                        answerMcChoice(-1, "__TIMEOUT__", true);
+                    }
+                }, 1000);
+            }
+        }
+
+        async function answerMcChoice(btnIdx, chosenMeaning, isSpeedMode) {
+            clearGameTimers();
+            const session = state.gameSession;
+            const currentWord = session.words[session.index];
+            const isCorrect = chosenMeaning === currentWord.meaningVi;
+
+            document.querySelectorAll(".mc-opt-btn").forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                session.correct++;
+                session.score += isSpeedMode ? 150 : 100;
+            } else {
+                currentWord.wrongCount = (currentWord.wrongCount || 0) + 1;
+                await saveWordToCloud(currentWord);
+            }
+
+            const fb = document.getElementById("mcFeedbackBox");
+            fb.classList.remove("hidden");
+            fb.classList.add(isCorrect ? "bg-[#96b95b]/40" : "bg-[#f3c6c9]");
+            fb.innerHTML = `
+                <div class="font-extrabold text-base ${isCorrect ? "text-[#375415]" : "text-[#78131c]"}">
+                    ${chosenMeaning === "__TIMEOUT__" ? "⏰ Hết giờ!" : isCorrect ? "✅ Chính xác!" : "❌ Chưa chính xác!"}
+                </div>
+                <p class="font-bold">Đáp án đúng: <strong>${escapeHtml(currentWord.meaningVi)}</strong></p>
+                ${currentWord.defEn ? `<p class="text-xs italic">Definition: ${escapeHtml(currentWord.defEn)}</p>` : ""}
+                ${currentWord.exampleEn ? `<p class="text-xs">Ví dụ: ${escapeHtml(currentWord.exampleEn)}</p>` : ""}
+                <div class="pt-1">
+                    <button onclick="nextGameStep(${isSpeedMode ? "'speed'" : "'mc'"})" class="scrap-btn px-5 py-2 rounded-2xl bg-[#78131c] text-[#f9edc9] text-xs font-extrabold cursor-pointer">
+                        Câu tiếp theo ➡️
+                    </button>
+                </div>
+            `;
+        }
+
+        // GAME 3: SPELLING CHALLENGE
+        function renderSpellingGameQuestion() {
+            const session = state.gameSession;
+            if (session.index >= session.words.length) {
+                renderGameSummary(`Hoàn thành thử thách chính tả: ${session.correct}/${session.words.length} từ chính xác!`);
+                return;
+            }
+            const w = session.words[session.index];
+            const maskedHint = w.word[0] + " _ ".repeat(Math.max(1, w.word.length - 2)) + (w.word.length > 1 ? w.word[w.word.length - 1] : "");
+
+            document.getElementById("activeGameArena").innerHTML = `
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#2c1813]/30 pb-3">
+                    <h3 class="font-display font-bold text-xl text-[#78131c]">✍️ Game 3: Spelling Challenge</h3>
+                    <div class="flex items-center gap-2 text-xs font-extrabold">
+                        <span class="bg-white px-3 py-1 rounded-full border-2 border-[#2c1813]">Câu ${session.index + 1}/${session.words.length}</span>
+                        <span class="bg-[#96b95b] px-3 py-1 rounded-full border-2 border-[#2c1813]">Điểm: ${session.score}</span>
+                        <button onclick="exitGameArena()" class="scrap-btn px-3 py-1 rounded-xl bg-white cursor-pointer">Thoát</button>
+                    </div>
+                </div>
+                <div class="max-w-lg mx-auto text-center space-y-3 py-3">
+                    <span class="text-xs font-extrabold px-3 py-0.5 rounded-full bg-[#f9edc9] border border-[#2c1813]">${escapeHtml(w.pos)} • ${w.word.length} chữ cái</span>
+                    <h4 class="font-display font-bold text-2xl text-[#2c1813]">${escapeHtml(w.meaningVi)}</h4>
+                    ${w.defEn ? `<p class="text-xs italic text-[#2c1813]/75">"${escapeHtml(w.defEn)}"</p>` : ""}
+                    <div class="flex justify-center gap-2">
+                        <button onclick="speakText('${escapeHtml(w.word)}')" class="scrap-btn px-3.5 py-1.5 rounded-xl bg-[#f3c6c9] text-xs font-extrabold cursor-pointer">🔊 Nghe phát âm</button>
+                        <span class="px-3 py-1.5 rounded-xl bg-white border border-[#2c1813] text-xs font-mono font-bold">Gợi ý: ${maskedHint}</span>
+                    </div>
+                    <form onsubmit="checkSpellingAnswer(event)" class="flex gap-2 pt-2">
+                        <input type="text" id="spellingInput" required autocomplete="off" placeholder="Gõ từ tiếng Anh chính xác..." class="flex-1 px-4 py-2.5 rounded-2xl border-2 border-[#2c1813] bg-white font-display font-bold text-center text-lg">
+                        <button type="submit" class="scrap-btn px-5 py-2.5 rounded-2xl bg-[#96b95b] font-extrabold text-sm cursor-pointer">Kiểm tra</button>
+                    </form>
+                    <div id="spellingFeedback" class="hidden p-3.5 rounded-2xl border-2 border-[#2c1813] text-sm font-bold"></div>
+                </div>
+            `;
+        }
+
+        async function checkSpellingAnswer(e) {
+            e.preventDefault();
+            const session = state.gameSession;
+            const w = session.words[session.index];
+            const input = document.getElementById("spellingInput");
+            const userVal = input.value.trim().toLowerCase();
+            const isCorrect = userVal === w.word.toLowerCase();
+
+            input.disabled = true;
+            if (isCorrect) {
+                session.correct++;
+                session.score += 120;
+            } else {
+                w.wrongCount = (w.wrongCount || 0) + 1;
+                await saveWordToCloud(w);
+            }
+
+            const fb = document.getElementById("spellingFeedback");
+            fb.classList.remove("hidden");
+            fb.classList.add(isCorrect ? "bg-[#96b95b]/45" : "bg-[#f3c6c9]");
+            fb.innerHTML = `
+                <p>${isCorrect ? "✅ Chính xác tuyệt đối!" : `❌ Chưa đúng! Từ chính xác là: <strong class="text-[#78131c] text-base">${escapeHtml(w.word)}</strong>`}</p>
+                <button type="button" onclick="nextGameStep('spelling')" class="scrap-btn mt-2 px-5 py-1.5 rounded-xl bg-[#78131c] text-[#f9edc9] text-xs font-extrabold cursor-pointer">Tiếp tục ➡️</button>
+            `;
+        }
+
+        // GAME 4: FILL IN THE BLANK (SỬ DỤNG CÂU VÍ DỤ ĐÃ LƯU)
+        function renderFillBlankQuestion() {
+            const session = state.gameSession;
+            if (session.index >= session.words.length) {
+                renderGameSummary(`Hoàn thành điền từ vào ngữ cảnh: ${session.correct}/${session.words.length} câu!`);
+                return;
+            }
+            const w = session.words[session.index];
+            const regex = new RegExp(w.word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+            let sentenceWithBlank = "";
+            if (w.exampleEn && regex.test(w.exampleEn)) {
+                sentenceWithBlank = escapeHtml(w.exampleEn).replace(regex, `<span class="inline-block px-3 py-0.5 mx-1 bg-[#f3c6c9] border-b-2 border-[#2c1813] rounded font-mono">_______</span>`);
+            } else {
+                sentenceWithBlank = `The English word for <strong>"${escapeHtml(w.meaningVi)}"</strong> (${escapeHtml(w.pos)}) is <span class="inline-block px-3 py-0.5 mx-1 bg-[#f3c6c9] border-b-2 border-[#2c1813] rounded font-mono">_______</span>.`;
+            }
+
+            document.getElementById("activeGameArena").innerHTML = `
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#2c1813]/30 pb-3">
+                    <h3 class="font-display font-bold text-xl text-[#78131c]">📝 Game 4: Fill in the Blank</h3>
+                    <div class="flex items-center gap-2 text-xs font-extrabold">
+                        <span class="bg-white px-3 py-1 rounded-full border-2 border-[#2c1813]">Câu ${session.index + 1}/${session.words.length}</span>
+                        <span class="bg-[#96b95b] px-3 py-1 rounded-full border-2 border-[#2c1813]">Điểm: ${session.score}</span>
+                        <button onclick="exitGameArena()" class="scrap-btn px-3 py-1 rounded-xl bg-white cursor-pointer">Thoát</button>
+                    </div>
+                </div>
+                <div class="max-w-xl mx-auto space-y-4 py-3 text-center">
+                    <p class="text-xs font-extrabold text-[#78131c]">Gợi ý nghĩa tiếng Việt: "${escapeHtml(w.meaningVi)}"</p>
+                    <div class="bg-white p-5 rounded-2xl border-2 border-[#2c1813] text-base sm:text-lg font-bold leading-relaxed">
+                        ${sentenceWithBlank}
+                    </div>
+                    <form onsubmit="checkFillBlankAnswer(event)" class="flex gap-2">
+                        <input type="text" id="fillBlankInput" required autocomplete="off" placeholder="Điền từ còn thiếu..." class="flex-1 px-4 py-2.5 rounded-2xl border-2 border-[#2c1813] bg-white font-display font-bold text-center text-base">
+                        <button type="submit" class="scrap-btn px-5 py-2.5 rounded-2xl bg-[#96b95b] font-extrabold text-sm cursor-pointer">Xác nhận</button>
+                    </form>
+                    <div id="fillFeedback" class="hidden p-3.5 rounded-2xl border-2 border-[#2c1813] text-sm font-bold"></div>
+                </div>
+            `;
+        }
+
+        async function checkFillBlankAnswer(e) {
+            e.preventDefault();
+            const session = state.gameSession;
+            const w = session.words[session.index];
+            const input = document.getElementById("fillBlankInput");
+            const isCorrect = input.value.trim().toLowerCase() === w.word.toLowerCase();
+            input.disabled = true;
+
+            if (isCorrect) {
+                session.correct++;
+                session.score += 120;
+            } else {
+                w.wrongCount = (w.wrongCount || 0) + 1;
+                await saveWordToCloud(w);
+            }
+
+            const fb = document.getElementById("fillFeedback");
+            fb.classList.remove("hidden");
+            fb.classList.add(isCorrect ? "bg-[#96b95b]/45" : "bg-[#f3c6c9]");
+            fb.innerHTML = `
+                <p>${isCorrect ? "✅ Chính xác!" : `❌ Đáp án đúng là: <strong class="text-[#78131c]">${escapeHtml(w.word)}</strong>`}</p>
+                ${w.exampleVi ? `<p class="text-xs font-normal mt-1">Dịch: ${escapeHtml(w.exampleVi)}</p>` : ""}
+                <button type="button" onclick="nextGameStep('fill')" class="scrap-btn mt-2 px-5 py-1.5 rounded-xl bg-[#78131c] text-[#f9edc9] text-xs font-extrabold cursor-pointer">Câu tiếp theo ➡️</button>
+            `;
+        }
+
+        // GAME 5: WORD SCRAMBLE
+        function renderScrambleQuestion() {
+            const session = state.gameSession;
+            if (session.index >= session.words.length) {
+                renderGameSummary(`Hoàn thành giải mã chữ cái: ${session.correct}/${session.words.length} từ!`);
+                return;
+            }
+            const w = session.words[session.index];
+            const chars = w.word.split("");
+            for (let i = chars.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [chars[i], chars[j]] = [chars[j], chars[i]];
+            }
+
+            document.getElementById("activeGameArena").innerHTML = `
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#2c1813]/30 pb-3">
+                    <h3 class="font-display font-bold text-xl text-[#78131c]">🔤 Game 5: Word Scramble</h3>
+                    <div class="flex items-center gap-2 text-xs font-extrabold">
+                        <span class="bg-white px-3 py-1 rounded-full border-2 border-[#2c1813]">Câu ${session.index + 1}/${session.words.length}</span>
+                        <span class="bg-[#96b95b] px-3 py-1 rounded-full border-2 border-[#2c1813]">Điểm: ${session.score}</span>
+                        <button onclick="exitGameArena()" class="scrap-btn px-3 py-1 rounded-xl bg-white cursor-pointer">Thoát</button>
+                    </div>
+                </div>
+                <div class="max-w-lg mx-auto text-center space-y-4 py-3">
+                    <p class="text-sm font-extrabold text-[#2c1813]">Nghĩa tiếng Việt: <span class="text-[#78131c]">${escapeHtml(w.meaningVi)}</span> (${escapeHtml(w.pos)})</p>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        ${chars.map(c => `<span class="w-10 h-10 rounded-xl bg-[#f9edc9] border-2 border-[#2c1813] shadow-[0_3px_0_#2c1813] font-display font-bold text-lg flex items-center justify-center uppercase">${escapeHtml(c)}</span>`).join("")}
+                    </div>
+                    <form onsubmit="checkScrambleAnswer(event)" class="flex gap-2">
+                        <input type="text" id="scrambleInput" required autocomplete="off" placeholder="Sắp xếp lại thành từ đúng..." class="flex-1 px-4 py-2.5 rounded-2xl border-2 border-[#2c1813] bg-white font-display font-bold text-center text-lg">
+                        <button type="submit" class="scrap-btn px-5 py-2.5 rounded-2xl bg-[#96b95b] font-extrabold text-sm cursor-pointer">Kiểm tra</button>
+                    </form>
+                    <div id="scrambleFeedback" class="hidden p-3.5 rounded-2xl border-2 border-[#2c1813] text-sm font-bold"></div>
+                </div>
+            `;
+        }
+
+        async function checkScrambleAnswer(e) {
+            e.preventDefault();
+            const session = state.gameSession;
+            const w = session.words[session.index];
+            const input = document.getElementById("scrambleInput");
+            const isCorrect = input.value.trim().toLowerCase() === w.word.toLowerCase();
+            input.disabled = true;
+
+            if (isCorrect) {
+                session.correct++;
+                session.score += 110;
+            } else {
+                w.wrongCount = (w.wrongCount || 0) + 1;
+                await saveWordToCloud(w);
+            }
+
+            const fb = document.getElementById("scrambleFeedback");
+            fb.classList.remove("hidden");
+            fb.classList.add(isCorrect ? "bg-[#96b95b]/45" : "bg-[#f3c6c9]");
+            fb.innerHTML = `
+                <p>${isCorrect ? "✅ Tuyệt vời! Bạn đã sắp xếp chính xác." : `❌ Chưa đúng! Từ gốc là: <strong class="text-[#78131c]">${escapeHtml(w.word)}</strong>`}</p>
+                <button type="button" onclick="nextGameStep('scramble')" class="scrap-btn mt-2 px-5 py-1.5 rounded-xl bg-[#78131c] text-[#f9edc9] text-xs font-extrabold cursor-pointer">Từ tiếp theo ➡️</button>
+            `;
+        }
+
+        function nextGameStep(type) {
+            state.gameSession.index++;
+            if (type === "mc") renderMcGameQuestion(false);
+            else if (type === "speed") renderMcGameQuestion(true);
+            else if (type === "spelling") renderSpellingGameQuestion();
+            else if (type === "fill") renderFillBlankQuestion();
+            else if (type === "scramble") renderScrambleQuestion();
+        }
+
+        function renderGameSummary(subtitle) {
+            const session = state.gameSession;
+            state.profile.gamesPlayed = (state.profile.gamesPlayed || 0) + 1;
+            saveMetaToCloud();
+            document.getElementById("activeGameArena").innerHTML = `
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-5xl">🏆</div>
+                    <h3 class="font-display font-bold text-2xl sm:text-3xl text-[#78131c]">Tổng kết trò chơi!</h3>
+                    <p class="text-sm sm:text-base font-bold text-[#2c1813]">${subtitle}</p>
+                    <div class="inline-flex items-center gap-6 bg-white px-6 py-3 rounded-3xl border-2 border-[#2c1813] shadow-[0_4px_0_#2c1813]">
+                        <div>
+                            <div class="text-xs font-bold text-[#2c1813]/70">Tổng điểm</div>
+                            <div class="font-display font-bold text-2xl text-[#78131c]">${session.score}</div>
+                        </div>
+                        <div class="h-8 w-0.5 bg-[#2c1813]/20"></div>
+                        <div>
+                            <div class="text-xs font-bold text-[#2c1813]/70">Số câu đúng</div>
+                            <div class="font-display font-bold text-2xl text-[#4d6e22]">${session.correct}</div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3 pt-2">
+                        <button onclick="startGame('${session.type}')" class="scrap-btn px-5 py-2.5 rounded-2xl bg-[#96b95b] font-extrabold text-sm cursor-pointer">🔄 Chơi lại</button>
+                        <button onclick="exitGameArena()" class="scrap-btn px-5 py-2.5 rounded-2xl bg-white font-extrabold text-sm cursor-pointer">🎮 Đổi trò chơi / Đổi bộ từ</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ---------------------------------------------------------------------
+        // 9. SMART REVIEW – HỆ THỐNG ÔN TẬP THÔNG MINH
+        // ---------------------------------------------------------------------
+        function getSmartReviewPriorityList() {
+            const weight = { reviewing: 4, learning: 3, new: 2, mastered: 1 };
+            return [...state.words].sort((a, b) => {
+                const scoreA = (weight[a.status] || 1) * 10 + (a.wrongCount || 0) * 5 - ((a.lastReviewed || 0) / 1e11);
+                const scoreB = (weight[b.status] || 1) * 10 + (b.wrongCount || 0) * 5 - ((b.lastReviewed || 0) / 1e11);
+                return scoreB - scoreA;
+            });
+        }
+
+        function renderSmartReviewQueue() {
+            const queue = getSmartReviewPriorityList();
+            const box = document.getElementById("smartReviewQueueList");
+            if (!queue.length) {
+                box.innerHTML = `<p class="text-sm font-bold text-[#2c1813]/70">Chưa có từ vựng trong kho để ôn tập.</p>`;
+                return;
+            }
+            box.innerHTML = queue.slice(0, 15).map((w, idx) => `
+                <div class="bg-[#fff8e6] border-2 border-[#2c1813] rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-xl bg-[#78131c] text-[#f9edc9] font-display font-bold text-xs flex items-center justify-center shrink-0">#${idx + 1}</span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-display font-bold text-base text-[#78131c]">${escapeHtml(w.word)}</span>
+                                <span class="text-xs font-bold text-[#2c1813]/65">${escapeHtml(w.ipa || "")}</span>
+                            </div>
+                            <p class="text-xs font-bold text-[#2c1813]">${escapeHtml(w.meaningVi)}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs font-extrabold">
+                        ${w.wrongCount > 0 ? `<span class="bg-[#f3c6c9] text-[#78131c] px-2.5 py-0.5 rounded-full border border-[#2c1813]">Sai ${w.wrongCount} lần</span>` : ""}
+                        <span class="bg-white px-2.5 py-0.5 rounded-full border border-[#2c1813] uppercase">${w.status}</span>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function startSmartReviewSession() {
+            const list = getSmartReviewPriorityList().filter(w => w.status !== "mastered");
+            state.srQueue = list.length ? list : getSmartReviewPriorityList();
+            state.srIndex = 0;
+            if (!state.srQueue.length) {
+                showToast("Kho từ trống! Hãy thêm từ trước nhé.", "🌱");
+                return;
+            }
+            const box = document.getElementById("smartReviewSessionBox");
+            box.classList.remove("hidden");
+            renderSmartReviewCard();
+        }
+
+        function renderSmartReviewCard() {
+            const box = document.getElementById("smartReviewSessionBox");
+            if (state.srIndex >= state.srQueue.length) {
+                box.innerHTML = `
+                    <div class="text-center py-4 space-y-3">
+                        <div class="text-4xl">🎉</div>
+                        <h3 class="font-display font-bold text-2xl text-[#78131c]">Hoàn thành phiên ôn tập thông minh!</h3>
+                        <p class="text-sm font-bold">Mức độ ghi nhớ của tất cả các từ đã được cập nhật.</p>
+                        <button onclick="document.getElementById('smartReviewSessionBox').classList.add('hidden')" class="scrap-btn px-5 py-2 rounded-2xl bg-[#96b95b] text-sm font-extrabold cursor-pointer">Đóng phiên ôn</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const w = state.srQueue[state.srIndex];
+            box.innerHTML = `
+                <div class="flex items-center justify-between text-xs font-extrabold">
+                    <span>Thẻ ôn tập ${state.srIndex + 1} / ${state.srQueue.length}</span>
+                    <button onclick="document.getElementById('smartReviewSessionBox').classList.add('hidden')" class="underline cursor-pointer">Đóng</button>
+                </div>
+                <div class="text-center py-3 space-y-2">
+                    <span class="text-xs font-extrabold px-3 py-0.5 rounded-full bg-[#f9edc9] border border-[#2c1813]">${escapeHtml(w.pos)} • ${escapeHtml(w.deck)}</span>
+                    <div class="flex items-center justify-center gap-2">
+                        <h3 class="font-display font-bold text-3xl text-[#78131c]">${escapeHtml(w.word)}</h3>
+                        <button onclick="speakText('${escapeHtml(w.word)}')" class="scrap-btn w-9 h-9 rounded-xl bg-white text-sm cursor-pointer">🔊</button>
+                    </div>
+                    <p class="text-xs font-bold text-[#2c1813]/70">${escapeHtml(w.ipa || "")}</p>
+                    <button id="srRevealBtn" onclick="revealSmartReviewAnswer()" class="scrap-btn mt-2 px-5 py-2 rounded-2xl bg-[#f3c6c9] text-sm font-extrabold cursor-pointer">
+                        👁️ Hiện nghĩa &amp; Đánh giá mức độ nhớ
+                    </button>
+                </div>
+                <div id="srAnswerArea" class="hidden space-y-4 pt-3 border-t-2 border-dashed border-[#2c1813]/30 text-center">
+                    <div class="bg-white p-4 rounded-2xl border-2 border-[#2c1813]">
+                        <p class="font-display font-bold text-xl text-[#2c1813]">${escapeHtml(w.meaningVi)}</p>
+                        ${w.exampleEn ? `<p class="text-xs font-semibold mt-1 text-[#2c1813]/80">"${escapeHtml(w.exampleEn)}"</p>` : ""}
+                    </div>
+                    <p class="text-xs font-extrabold uppercase text-[#78131c]">Bạn nhớ từ này ở mức độ nào?</p>
+                    <div class="flex flex-wrap justify-center gap-2.5">
+                        <button onclick="rateSmartReviewWord('reviewing')" class="scrap-btn px-4 py-2 rounded-2xl bg-[#f3c6c9] text-xs sm:text-sm font-extrabold cursor-pointer">🍓 Quên / Cần ôn lại</button>
+                        <button onclick="rateSmartReviewWord('learning')" class="scrap-btn px-4 py-2 rounded-2xl bg-[#edd79c] text-xs sm:text-sm font-extrabold cursor-pointer">🍰 Nhớ mang máng (Learning)</button>
+                        <button onclick="rateSmartReviewWord('mastered')" class="scrap-btn px-4 py-2 rounded-2xl bg-[#96b95b] text-xs sm:text-sm font-extrabold cursor-pointer">🌿 Thuộc lòng (Mastered)</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function revealSmartReviewAnswer() {
+            document.getElementById("srRevealBtn")?.classList.add("hidden");
+            document.getElementById("srAnswerArea")?.classList.remove("hidden");
+        }
+
+        async function rateSmartReviewWord(level) {
+            const w = state.srQueue[state.srIndex];
+            w.status = level;
+            w.lastReviewed = Date.now();
+            if (level === "reviewing") w.wrongCount = (w.wrongCount || 0) + 1;
+            await saveWordToCloud(w);
+            state.srIndex++;
+            renderSmartReviewCard();
+        }
+
+        // ---------------------------------------------------------------------
+        // 10. VOCABULARY NOTEBOOK (SỔ TAY BẢNG & CHỌN NHIỀU ĐƯA VÀO BỘ MỚI)
+        // ---------------------------------------------------------------------
+        function renderNotebook() {
+            const q = (document.getElementById("nbSearchInput")?.value || "").trim().toLowerCase();
+            const deck = document.getElementById("nbDeckFilter")?.value || "ALL";
+            const sortBy = document.getElementById("nbSortSelect")?.value || "newest";
+
+            let list = state.words.filter(w => {
+                if (deck !== "ALL" && w.deck !== deck) return false;
+                if (q && !`${w.word} ${w.meaningVi} ${w.pos}`.toLowerCase().includes(q)) return false;
+                return true;
+            });
+
+            if (sortBy === "az") list.sort((a, b) => a.word.localeCompare(b.word));
+            else if (sortBy === "za") list.sort((a, b) => b.word.localeCompare(a.word));
+            else if (sortBy === "level") list.sort((a, b) => a.status.localeCompare(b.status));
+
+            const tbody = document.getElementById("notebookTableBody");
+            document.getElementById("nbSelectedCount").textContent = state.nbSelectedIds.size;
+
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-sm font-bold text-[#2c1813]/70">Sổ tay chưa có từ vựng nào khớp điều kiện.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map(w => `
+                <tr class="hover:bg-[#f9edc9]/45 transition">
+                    <td class="p-3 text-center">
+                        <input type="checkbox" ${state.nbSelectedIds.has(w.id) ? "checked" : ""} onchange="toggleNotebookRow('${w.id}', this.checked)" class="w-4 h-4 accent-[#78131c]">
+                    </td>
+                    <td class="p-3">
+                        <div class="font-display font-bold text-[#78131c]">${escapeHtml(w.word)}</div>
+                        <div class="text-xs text-[#2c1813]/65">${escapeHtml(w.ipa || "")}</div>
+                    </td>
+                    <td class="p-3 text-xs uppercase">${escapeHtml(w.pos)}</td>
+                    <td class="p-3">${escapeHtml(w.meaningVi)}</td>
+                    <td class="p-3"><span class="text-xs bg-[#f9edc9] px-2.5 py-0.5 rounded-full border border-[#2c1813]/50">${escapeHtml(w.deck)}</span></td>
+                    <td class="p-3 text-xs uppercase font-extrabold">${escapeHtml(w.status)}</td>
+                    <td class="p-3 text-right">
+                        <button onclick="openWordDetailModal('${w.id}')" class="scrap-btn px-3 py-1 rounded-xl bg-[#f3c6c9] text-xs font-extrabold cursor-pointer">Xem chi tiết</button>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        function toggleNotebookRow(wordId, checked) {
+            if (checked) state.nbSelectedIds.add(wordId);
+            else state.nbSelectedIds.delete(wordId);
+            document.getElementById("nbSelectedCount").textContent = state.nbSelectedIds.size;
+        }
+
+        function toggleNotebookSelectAll(checked) {
+            if (checked) state.words.forEach(w => state.nbSelectedIds.add(w.id));
+            else state.nbSelectedIds.clear();
+            renderNotebook();
+        }
+
+        async function assignSelectedToDeck() {
+            if (!state.nbSelectedIds.size) {
+                showToast("Hãy tích chọn ít nhất 1 từ trong bảng!", "⚠️");
+                return;
+            }
+            const targetDeck = document.getElementById("nbTargetDeckSelect").value;
+            for (const id of state.nbSelectedIds) {
+                const w = state.words.find(item => item.id === id);
+                if (w) {
+                    w.deck = targetDeck;
+                    await saveWordToCloud(w);
+                }
+            }
+            const movedCount = state.nbSelectedIds.size;
+            state.nbSelectedIds.clear();
+            refreshEntireUI();
+            showToast(`Đã chuyển ${movedCount} từ vào bộ "${targetDeck}"!`, "📂");
+        }
+
+        function openWordDetailModal(wordId) {
+            const w = state.words.find(item => item.id === wordId);
+            if (!w) return;
+            document.getElementById("detailModalTitle").textContent = `${w.word} ${w.ipa || ""}`;
+            document.getElementById("detailModalBody").innerHTML = `
+                <div class="flex flex-wrap gap-2">
+                    <span class="px-3 py-0.5 rounded-full bg-[#78131c] text-[#f9edc9] text-xs font-extrabold uppercase">${escapeHtml(w.pos)}</span>
+                    <span class="px-3 py-0.5 rounded-full bg-[#96b95b] text-[#2c1813] text-xs font-extrabold">🧺 ${escapeHtml(w.deck)}</span>
+                    <button onclick="speakText('${escapeHtml(w.word)}')" class="scrap-btn px-3 py-0.5 rounded-full bg-white text-xs font-extrabold cursor-pointer">🔊 Phát âm</button>
+                </div>
+                <div class="bg-[#fff8e6] p-3.5 rounded-2xl border-2 border-[#2c1813]">
+                    <p class="text-xs font-extrabold uppercase text-[#78131c]">Nghĩa tiếng Việt:</p>
+                    <p class="font-display font-bold text-lg">${escapeHtml(w.meaningVi)}</p>
+                </div>
+                ${w.defEn ? `<p><strong>English Definition:</strong> ${escapeHtml(w.defEn)}</p>` : ""}
+                ${w.exampleEn ? `<div class="bg-white p-3 rounded-xl border border-[#2c1813]/40"><p class="font-bold">📝 ${escapeHtml(w.exampleEn)}</p><p class="text-xs text-[#2c1813]/75">${escapeHtml(w.exampleVi || "")}</p></div>` : ""}
+                ${w.synonyms ? `<p><strong>Synonyms:</strong> ${escapeHtml(w.synonyms)}</p>` : ""}
+                ${w.antonyms ? `<p><strong>Antonyms:</strong> ${escapeHtml(w.antonyms)}</p>` : ""}
+                ${w.collocations ? `<p><strong>Collocations:</strong> ${escapeHtml(w.collocations)}</p>` : ""}
+                ${w.notes ? `<p><strong>Notes:</strong> ${escapeHtml(w.notes)}</p>` : ""}
+            `;
+            document.getElementById("wordDetailModal").classList.remove("hidden");
+        }
+
+        function closeWordDetailModal() {
+            document.getElementById("wordDetailModal").classList.add("hidden");
+        }
+
+        // ---------------------------------------------------------------------
+        // 11. SAO LƯU JSON / CSV & QUẢN LÝ DỮ LIỆU MẪU TÙY CHỌN
+        // ---------------------------------------------------------------------
+        function exportDataJSON() {
+            const payload = {
+                app: "My Vocabulary Garden",
+                exportedAt: new Date().toISOString(),
+                customDecks: state.customDecks,
+                words: state.words
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+            triggerDownload(blob, `MyVocabularyGarden_Backup_${new Date().toISOString().slice(0, 10)}.json`);
+            showToast("Đã xuất tệp sao lưu JSON thành công!", "💾");
+        }
+
+        function exportDataCSV() {
+            const headers = ["Word", "IPA", "PartOfSpeech", "MeaningVi", "DefinitionEn", "ExampleEn", "ExampleVi", "Synonyms", "Antonyms", "Collocations", "Notes", "Deck", "Status"];
+            const rows = state.words.map(w => headers.map(h => {
+                const mapKey = {
+                    Word: w.word, IPA: w.ipa, PartOfSpeech: w.pos, MeaningVi: w.meaningVi,
+                    DefinitionEn: w.defEn, ExampleEn: w.exampleEn, ExampleVi: w.exampleVi,
+                    Synonyms: w.synonyms, Antonyms: w.antonyms, Collocations: w.collocations,
+                    Notes: w.notes, Deck: w.deck, Status: w.status
+                };
+                const val = String(mapKey[h] || "").replace(/"/g, '""');
+                return `"${val}"`;
+            }).join(","));
+
+            const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            triggerDownload(blob, `MyVocabularyGarden_${new Date().toISOString().slice(0, 10)}.csv`);
+            showToast("Đã xuất bảng từ vựng CSV thành công!", "📊");
+        }
+
+        function triggerDownload(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function handleImportJSON(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    const importedWords = Array.isArray(parsed) ? parsed : (parsed.words || []);
+                    if (Array.isArray(parsed.customDecks)) {
+                        state.customDecks = Array.from(new Set([...state.customDecks, ...parsed.customDecks]));
+                        await saveMetaToCloud();
+                    }
+                    let count = 0;
+                    for (const item of importedWords) {
+                        if (item && item.word && item.meaningVi) {
+                            const cleanObj = {
+                                ...item,
+                                id: item.id || `w_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                                createdAt: item.createdAt || Date.now()
+                            };
+                            await saveWordToCloud(cleanObj);
+                            count++;
+                        }
+                    }
+                    showToast(`Đã khôi phục ${count} từ vựng từ tệp sao lưu!`, "🎉");
+                } catch (err) {
+                    showToast("Tệp JSON không hợp lệ! Vui lòng kiểm tra lại.", "❌");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = "";
+        }
+
+        async function loadOptionalStarterPack() {
+            let added = 0;
+            for (const sample of STARTER_SAMPLE_WORDS) {
+                if (!state.words.some(w => w.word.toLowerCase() === sample.word.toLowerCase())) {
+                    await saveWordToCloud({ ...sample, createdAt: Date.now() + added });
+                    added++;
+                }
+            }
+            showToast(added > 0 ? `Đã nạp ${added} từ mẫu trải nghiệm vào vườn!` : "Các từ mẫu đã có sẵn trong vườn của bạn.", "✨");
+        }
+
+        async function removeSampleWordsOnly() {
+            const samples = state.words.filter(w => w.isSample);
+            if (!samples.length) {
+                showToast("Hiện không có từ mẫu nào trong kho.", "ℹ️");
+                return;
+            }
+            const ok = await askConfirm("Xóa riêng các từ mẫu?", `Xóa ${samples.length} từ mẫu trải nghiệm và giữ nguyên toàn bộ từ bạn tự tạo?`);
+            if (!ok) return;
+            for (const s of samples) {
+                await deleteWordFromCloud(s.id);
+            }
+            showToast(`Đã dọn sạch ${samples.length} từ mẫu!`, "🧹");
+        }
+
+        async function clearAllUserVocabulary() {
+            if (!state.words.length) return;
+            const ok = await askConfirm("Xóa toàn bộ kho từ?", "Thao tác này sẽ xóa tất cả từ vựng hiện có. Hãy chắc chắn bạn đã xuất sao lưu JSON nếu cần.");
+            if (!ok) return;
+            const allIds = state.words.map(w => w.id);
+            for (const id of allIds) {
+                await deleteWordFromCloud(id);
+            }
+            showToast("Đã làm trống toàn bộ kho từ vựng.", "🗑️");
+        }
+
+        // Phím tắt Space lật thẻ khi đang ở Tab Flashcard
+        document.addEventListener("keydown", (e) => {
+            if (e.code === "Space" && !document.getElementById("tab-flashcard").classList.contains("hidden")) {
+                const tag = document.activeElement?.tagName;
+                if (tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+                    e.preventDefault();
+                    flipFlashcard();
+                }
+            }
+        });
+
+        // Gắn các hàm vào window để gọi từ thuộc tính onclick HTML
+        Object.assign(window, {
+            state,
+            switchTab,
+            openAddWordModal,
+            openEditWordModal,
+            closeWordEditorModal,
+            saveWordFromModal,
+            runAiVocabularyLookup,
+            triggerModalAiLookup,
+            checkDuplicateWordLive,
+            loadExistingDuplicateForEdit,
+            openAuthProfileModal,
+            closeAuthProfileModal,
+            switchAuthMode,
+            handleUsernameLogin,
+            handleCreateNewUsernameAccount,
+            copyUsernameToClipboard,
+            dismissNewAccountBanner,
+            saveUserProfileSettings,
+            handleUserSignOut,
+            toggleFavoriteWord,
+            confirmDeleteWord,
+            openBulkModal,
+            closeBulkModal,
+            processBulkImport,
+            createNewDeck,
+            deleteCustomDeck,
+            filterByDeckQuick,
+            renderWordManager,
+            initFlashcards,
+            flipFlashcard,
+            nextFlashcard,
+            prevFlashcard,
+            shuffleFlashcards,
+            toggleEnglishOnlyMode,
+            speakCurrentFlashcard,
+            markFlashcardStatus,
+            startGame,
+            exitGameArena,
+            pickMatchTile,
+            answerMcChoice,
+            checkSpellingAnswer,
+            checkFillBlankAnswer,
+            checkScrambleAnswer,
+            nextGameStep,
+            startSmartReviewSession,
+            revealSmartReviewAnswer,
+            rateSmartReviewWord,
+            startQuickReview,
+            renderNotebook,
+            toggleNotebookRow,
+            toggleNotebookSelectAll,
+            assignSelectedToDeck,
+            openWordDetailModal,
+            closeWordDetailModal,
+            exportDataJSON,
+            exportDataCSV,
+            handleImportJSON,
+            loadOptionalStarterPack,
+            removeSampleWordsOnly,
+            clearAllUserVocabulary,
+            speakText
+        });
+
+        // Khởi chạy ứng dụng
+        document.addEventListener("DOMContentLoaded", () => {
+            refreshEntireUI();
+            initCloudStorage();
+        });
+    </script>
+</body>
+</html>
